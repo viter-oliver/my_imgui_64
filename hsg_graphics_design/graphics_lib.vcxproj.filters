@@ -1,0 +1,535 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{20b90ce4-7fcb-4731-b9a0-075f875de82d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{f18ab499-84e1-499f-8eff-9754361e0e52}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="gl3w">
+      <UniqueIdentifier>{42f99867-3108-43b8-99d0-fabefaf1f2e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res_manager">
+      <UniqueIdentifier>{4d3b9ae6-9d54-4664-ada8-0867516a0fd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="controls">
+      <UniqueIdentifier>{4af6253d-cf2c-4816-ad92-39a212d68b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{098a79ae-f209-436c-b0e5-71d76d45ac34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{be949d9d-5e7f-4b53-81a9-c102882c28fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fbx">
+      <UniqueIdentifier>{f27df0d4-eb3f-41e2-a514-7eee7698c472}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="render_utilities">
+      <UniqueIdentifier>{8c38a201-8098-494d-9e3b-5dd3905a6a26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="afb_manager">
+      <UniqueIdentifier>{1eed8a52-3174-4df9-b74a-a6938f17dde9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="soil">
+      <UniqueIdentifier>{501149f1-a182-45d2-8b85-41da07de2e53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lua">
+      <UniqueIdentifier>{d3d6bffc-2f76-4b16-9b6a-f2c14499744d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\gl3w\GL\gl3w.c">
+      <Filter>gl3w</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="res_output.cpp">
+      <Filter>res_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_button.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_base.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_polygon_image.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_listbox.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_image.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="common_functions.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="miniz.c">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="ofbx.cpp">
+      <Filter>fbx</Filter>
+    </ClCompile>
+    <ClCompile Include="af_shader.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_textblock.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="afb_load.cpp">
+      <Filter>afb_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_slider.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="shader_uf.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="paricles_system.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="application.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_glfw_gl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_scene.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_cube_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_model_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_particles_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_particles_effect_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_particles1_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_plane_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_sphere_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_trajectory_box_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_block.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_image_play.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_slider_thumb.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_plot_lines.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_circle.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_modeling_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="af_shader_source_code.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="af_bind.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="af_state_manager.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="af_font_res_set.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="af_model.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="easing.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="af_material.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="af_primitive_object.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_material_2d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_material_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_quad_image.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="af_timer.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="screen_image_distortion.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_image_file.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\soil\image_DXT.c">
+      <Filter>soil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\soil\image_helper.c">
+      <Filter>soil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\soil\SOIL.c">
+      <Filter>soil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\soil\stb_image_aug.c">
+      <Filter>soil</Filter>
+    </ClCompile>
+    <ClCompile Include="af_feedback.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="af_playlist_group.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_listbox_ex.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_trans.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="rescontainer_manager.cpp">
+      <Filter>res_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_video.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_hud_4_time_curve_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_hud_4_time_wall_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_hud_obj_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_hud_object_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_hud_piece_3d.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ft_hud_projector.cpp">
+      <Filter>controls</Filter>
+    </ClCompile>
+    <ClCompile Include="lua_interpreter.cpp">
+      <Filter>render_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lapi.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lauxlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lbaselib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lcode.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lcorolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lctype.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ldblib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ldebug.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ldo.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ldump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lfunc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lgc.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\linit.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\liolib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\llex.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lmathlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lmem.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\loadlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lobject.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lopcodes.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\loslib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lparser.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lstate.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lstring.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lstrlib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ltable.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ltablib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\ltm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lundump.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lutf8lib.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lvm.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lua\lzio.c">
+      <Filter>lua</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\gl3w\GL\gl3w.h">
+      <Filter>gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\gl3w\GL\glcorearb.h">
+      <Filter>gl3w</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\texture.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="res_output.h">
+      <Filter>res_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="common_functions.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="miniz.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="ofbx.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="renderTransform.h">
+      <Filter>fbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\autolink.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\config.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\features.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\forwards.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\json.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\json_batchallocator.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\reader.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\value.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\json\writer.h">
+      <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="afb_load.h">
+      <Filter>afb_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="paricles_system.h">
+      <Filter>render_utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="platform_def.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw_gl3.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="python_interpreter.h">
+      <Filter>render_utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="easing.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\soil\image_DXT.h">
+      <Filter>soil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\soil\image_helper.h">
+      <Filter>soil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\soil\SOIL.h">
+      <Filter>soil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\soil\stb_image_aug.h">
+      <Filter>soil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\soil\stbi_DDS_aug.h">
+      <Filter>soil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\soil\stbi_DDS_aug_c.h">
+      <Filter>soil</Filter>
+    </ClInclude>
+    <ClInclude Include="screen_image_distortion.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lapi.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lauxlib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lcode.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lctype.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\ldebug.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\ldo.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lfunc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lgc.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\ljumptab.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\llex.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\llimits.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lmem.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lobject.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lopcodes.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lopnames.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lparser.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lprefix.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lstate.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lstring.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\ltable.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\ltm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lua.hpp">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\luaconf.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lualib.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lundump.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lvm.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lua\lzio.h">
+      <Filter>lua</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.txt" />
+    <None Include="..\..\json\json_internalarray.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="..\..\json\json_internalmap.inl">
+      <Filter>json</Filter>
+    </None>
+    <None Include="..\..\json\json_valueiterator.inl">
+      <Filter>json</Filter>
+    </None>
+  </ItemGroup>
+</Project>
