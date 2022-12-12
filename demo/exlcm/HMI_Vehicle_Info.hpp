@@ -21,19 +21,19 @@ class HMI_Vehicle_Info
         /// 驾驶模式  0:manual; 1:pilot_ready; 2:pilot;3:parking_ready; 4:parking; 5:ACC
         int8_t     nGear;
 
-        /// 档位						 
+        /// 档位
+        float      fSpeed;
+
+        /// 车速
         float      fSteeringAngle;
 
         /// 方向盘转角,角度,左正右负
-        float      fSpeed;
-
-        /// 车速  m/s					 
         float      fYawRate;
 
-        /// 车辆转向角速度			  
+        /// 车辆转向角速度
         float      fLateralAccel;
 
-        /// 横向加速度				 
+        /// 横向加速度
         float      fLongituAccel;
 
     public:
@@ -138,10 +138,10 @@ int HMI_Vehicle_Info::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __int8_t_encode_array(buf, offset + pos, maxlen - pos, &this->nGear, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fSteeringAngle, 1);
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fSpeed, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fSpeed, 1);
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fSteeringAngle, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fYawRate, 1);
@@ -166,10 +166,10 @@ int HMI_Vehicle_Info::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __int8_t_decode_array(buf, offset + pos, maxlen - pos, &this->nGear, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fSteeringAngle, 1);
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fSpeed, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fSpeed, 1);
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fSteeringAngle, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
     tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fYawRate, 1);
@@ -199,7 +199,7 @@ int HMI_Vehicle_Info::_getEncodedSizeNoHash() const
 
 uint64_t HMI_Vehicle_Info::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0xb3a48db26b4a4a0bLL;
+    uint64_t hash = 0x401a95a69701633fLL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

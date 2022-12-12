@@ -13,37 +13,37 @@ uniform mat4 projection;
 uniform float c[4];
 uniform float w;
 uniform int left_boder;
+uniform float voffset;
 void main()
 {
     vec3 pos=position;
     float posx0=pos.x;
-    float z=pos.z*0.01;
-    const float fs=100.0;
+    float z=pos.z;
     if(left_boder>0)
     {
          if(posx0<0.1)
          {
-              pos.x=(c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0])*fs-w;
+              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0]-w;
          }
          else
          {
-              pos.x=(c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0])*fs;
+              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0];
          }
     }
     else
     {
          if(posx0<0.1)
          {
-              pos.x=(c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0])*fs;
+              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0];
          }
          else
          {
-              pos.x=(c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0])*fs+w;
+              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0]+w;
          }
 
     } 
     gl_Position = projection * view * model * vec4(pos, 1.0);
-    TextCoord = textCoord;
+    TextCoord = vec2(textCoord.x,textCoord.y + voffset);
 }
 )glsl";
 static const char* sd_4_curve_fs = R"glsl(
@@ -51,10 +51,13 @@ static const char* sd_4_curve_fs = R"glsl(
 precision mediump float;
 in vec2 TextCoord;
 out vec4 o_clr;
+uniform vec3 lane_color;
 uniform sampler2D text_at;
 void main()
 {
-	o_clr = texture(text_at, TextCoord);
+    vec4 base_col = texture(text_at, TextCoord);
+    vec3 caucl_col = base_col.xyz * lane_color;
+    o_clr = vec4(caucl_col,base_col.w);
 }
 )glsl";
 
@@ -72,6 +75,7 @@ namespace auto_future
         */
 
           _pt_tb._attached_image[ 0 ] = '\0';
+          _pt_tb._lane_clr = { 1.f,1.f,1.f };
           _pt_tb._coeff_hac[ 0 ] = _pt_tb._coeff_hac[ 1 ] = _pt_tb._coeff_hac[ 2 ] = _pt_tb._coeff_hac[ 3 ] = 0.f;
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
           reg_property_handle( &_pt_tb, 0, [this]( void* member_address )
@@ -106,7 +110,7 @@ namespace auto_future
 
      }
      const int curve_len = 100;
-	 const float unit_len = 100.f;// 1000.f;
+     const float unit_len = 1.f;// 100.f;// 1000.f;
      const int point_cnt = curve_len * 2 + 2;
 
      void ft_4_time_curve_3d::link()
@@ -154,7 +158,7 @@ namespace auto_future
           {
                return;
           }
-		  ft_light_scene* p_prj = (ft_light_scene*)get_parent();
+		ft_light_scene* p_prj = (ft_light_scene*)get_parent();
           af_vec3* pview_pos = p_prj->get_view_pos();
           af_vec3* pcenter = p_prj->get_center_of_prj();
           af_vec3* pup = p_prj->get_up();
@@ -177,11 +181,14 @@ namespace auto_future
                trans,
                glm::vec3( _pt_tb._tanslation_x, _pt_tb._tanslation_y, _pt_tb._tanslation_z )
                );
+          
           _phud_sd->uniform( "model", glm::value_ptr( trans ) );
           _phud_sd->uniform( "c[0]", _pt_tb._coeff_hac );
           int ileft_border = _pt_tb._left_border;
           _phud_sd->uniform( "left_boder", &ileft_border );
           _phud_sd->uniform( "w", &_pt_tb._width );
+          _phud_sd->uniform("voffset", &_pt_tb._voffset);
+          _phud_sd->uniform("lane_color", (float*) & _pt_tb._lane_clr);
           glActiveTexture( GL_TEXTURE0 );
           glBindTexture( GL_TEXTURE_2D, _pat_image->_txt_id() );
           _phud_sd->uniform( "text_at", 0 );

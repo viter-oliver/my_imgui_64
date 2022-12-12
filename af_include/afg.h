@@ -35,6 +35,6 @@
 #include "ft_1_texture_node.h"
 #include "ft_1_texture_mesh.h"
 #include "ft_4_time_curve_3d.h"
-
+#include "ft_rectangle_3d.h"
 //#include "ft_trajectory_box_3d.h"
 //#include "ft_fbx_assert_3d.h"

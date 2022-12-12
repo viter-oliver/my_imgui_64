@@ -20,20 +20,26 @@ class HMI_Obstacles
 
         int16_t    nObjectID;
 
-        /// 障碍物ID	
+        /// 障碍物ID
         int8_t     nType;
 
         /// 障碍物类型   0:unclassified; 1:unknownsmall; 2:unknownbig; 3:pedestrian; 4:bicycle; 5:car; 6:truck; 7:underdriveable; 8:point; 9:us object; 10:motorbike; 11:cone
         float      fRelX;
 
-        /// 障碍物相对坐标X（自车系）		
+        /// 障碍物相对坐标X（自车系）
         float      fRelY;
 
-        /// 障碍物相对坐标Y（自车系）		
+        /// 障碍物相对坐标Y（自车系）
         float      fAbsSpeed;
 
-        /// 障碍物绝对速度				
+        /// 障碍物绝对速度
         float      fHeading;
+
+        /// 障碍物航向角,弧度,自车正向为0，右侧顺时针0到π，左侧逆时针0到-π
+        float      width;
+
+        /// 障碍物宽度
+        float      length;
 
     public:
         /**
@@ -152,6 +158,12 @@ int HMI_Obstacles::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->fHeading, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->width, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_encode_array(buf, offset + pos, maxlen - pos, &this->length, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
     return pos;
 }
 
@@ -180,6 +192,12 @@ int HMI_Obstacles::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->fHeading, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->width, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
+    tlen = __float_decode_array(buf, offset + pos, maxlen - pos, &this->length, 1);
+    if(tlen < 0) return tlen; else pos += tlen;
+
     return pos;
 }
 
@@ -193,12 +211,14 @@ int HMI_Obstacles::_getEncodedSizeNoHash() const
     enc_size += __float_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
     enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __float_encoded_array_size(NULL, 1);
+    enc_size += __float_encoded_array_size(NULL, 1);
     return enc_size;
 }
 
 uint64_t HMI_Obstacles::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0xdafc88cda4affccaLL;
+    uint64_t hash = 0x5bb1c7717bfef025LL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

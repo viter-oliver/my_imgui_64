@@ -11,13 +11,13 @@ namespace auto_future
           _pj_pt._center_of_prj = { 0.f, 90.f, 0.f };
 		  
           _pj_pt._up = { 0, 1.f, 0 };
-          _pj_pt._fovy = 20;
-          _pj_pt._near = 20;
-          _pj_pt._far = 100000.f;
+          _pj_pt._fovy =20;
+          _pj_pt._near =0.020;
+          _pj_pt._far = 100.f;
           _pj_pt._test_depth = true;
 		  _pj_pt._bk_clr = { 0.2f, 0.2f, 0.2f, 1.f };
-          _pj_pt._light_position = { 0.f,246.f,-97.f };
-		  _pj_pt._light_direction = { 0.f, -80.f, -60 };
+          _pj_pt._light_position = { 0.f,2.46f,-0.97f };
+		  _pj_pt._light_direction = { 0.f, -0.80f, -0.60 };
 		  _pj_pt._light_ambient_clr = { 0.17, 0.17, 0.17 };
 		  _pj_pt._light_diffuse_clr = { 1, 1, 1 };
 		  _pj_pt._light_specular_clr = { 1, 1, 1 };
@@ -65,6 +65,11 @@ namespace auto_future
           prepareFBO1( _colorTextId, _depthStencilTextId, _fboId, _in_p._sizew, _in_p._sizeh );
 
      }
+     void ft_light_scene::recreate_framebuff() {
+         release_resource();
+         prepareFBO1(_colorTextId, _depthStencilTextId, _fboId, _in_p._sizew, _in_p._sizeh);
+     }
+
 	 void ft_light_scene::draw_frames()
      {
           if( !_fboId )

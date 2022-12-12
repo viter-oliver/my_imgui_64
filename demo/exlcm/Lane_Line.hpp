@@ -20,25 +20,25 @@ class Lane_Line
 
         float      viewRangeStart;
 
-        /// 车道线范围起点		
+        /// 车道线范围起点
         float      viewRangeEnd;
 
-        /// 车道线范围终点     	
+        /// 车道线范围终点
         float      C0;
 
-        /// 车道线多项式系数C0 	
+        /// 车道线多项式系数C0
         float      C1;
 
-        /// 车道线多项式系数C1  	
+        /// 车道线多项式系数C1
         float      C2;
 
-        /// 车道线多项式系数C2   	
+        /// 车道线多项式系数C2
         float      C3;
 
-        /// 车道线多项式系数C3 	
+        /// 车道线多项式系数C3
         int8_t     nLineID;
 
-        /// 车道线ID			  
+        /// 车道线ID
         float      fLDWFlag;
 
         /// 车道线置信度

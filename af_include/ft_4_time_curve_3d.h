@@ -18,7 +18,9 @@ namespace auto_future
 								( float, _far, { -1.f }),
                                 ( float, _tanslation_x, { 0.f } ),
                                 ( float, _tanslation_y, { 0.f } ),
-                                ( float, _tanslation_z, { 0.f } ) )
+                                ( float, _tanslation_z, { 0.f } ),
+                                (float,_voffset,{0.f}),
+                                (af_vec3,_lane_clr))
           static ps_shader _phud_sd;
           static ps_primrive_object _ps_prm;
           ps_af_texture _pat_image;
@@ -54,6 +56,14 @@ namespace auto_future
                _pt_tb._coeff_hac[ 2 ] = cf2;
                _pt_tb._coeff_hac[ 3 ] = cf3;
                return *this;
+          }
+          ft_4_time_curve_3d& set_lane_color(af_vec3 lane_col) {
+              _pt_tb._lane_clr = lane_col;
+              return *this;
+          }
+          ft_4_time_curve_3d& set_voffset(float voffset) {
+              _pt_tb._voffset = voffset;
+              return *this;
           }
           void set_txt_obj(std::string txt_name) {
               strcpy(_pt_tb._attached_image, txt_name.c_str());

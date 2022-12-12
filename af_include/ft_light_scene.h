@@ -30,8 +30,10 @@ namespace auto_future
           ft_light_scene();
           ~ft_light_scene();
           void link();
+          void recreate_framebuff();          
           void draw_frames();
-         bool handle_mouse();
+          bool handle_mouse();
+
           af_vec3* get_view_pos()
           {
                return &_pj_pt._view_pos;

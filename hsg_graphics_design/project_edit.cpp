@@ -18,10 +18,10 @@ extern aliase_edit g_aliase_edit;
 extern base_prp_type_edit g_common_value_edit;
 extern bind_edit g_bind_edit;
 /*
-1¡¢Èç¹ûÊÇÄ©¶ËÔòflags|leaf£¬·ñÔòflags|openonarrow
-2¡¢ËùÓÐnode¶¼ÊÇselectable,Èç¹ûctrlÔò±£ÁôÉÏ´ÎµÄnodeµÄselected×´Ì¬£¬Èç¹û´Ë´Î!ctrlÔòÒÅÆúÉÏ´ÎµÄselected node×´Ì¬
-3¡¢µ±ÓÐ¶à¸önode´¦ÓÚselected×´Ì¬£¬¿ì½Ý²Ëµ¥Ö»ÓÐcopyºÍaddsiblings£¬Ö´ÐÐadd siblingÊ±£¬×ÔÄ©¶ËÏò¸¸¼¶Ñ°ÕÒselectedµÄnode£¬Ö´ÐÐ¸´ÖÆÐÐÎª
-4¡¢root±»Ñ¡ÖÐÊ±²»¿ÉÒÔÖ´ÐÐaddsibling
+1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä©ï¿½ï¿½ï¿½ï¿½flags|leafï¿½ï¿½ï¿½ï¿½ï¿½ï¿½flags|openonarrow
+2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½nodeï¿½ï¿½ï¿½ï¿½selectable,ï¿½ï¿½ï¿½ctrlï¿½ï¿½ï¿½ï¿½ï¿½Ï´Îµï¿½nodeï¿½ï¿½selected×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë´ï¿½!ctrlï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Îµï¿½selected node×´Ì¬
+3ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½nodeï¿½ï¿½ï¿½ï¿½selected×´Ì¬ï¿½ï¿½ï¿½ï¿½Ý²Ëµï¿½Ö»ï¿½ï¿½copyï¿½ï¿½addsiblingsï¿½ï¿½Ö´ï¿½ï¿½add siblingÊ±ï¿½ï¿½ï¿½ï¿½Ä©ï¿½ï¿½ï¿½ò¸¸¼ï¿½Ñ°ï¿½ï¿½selectedï¿½ï¿½nodeï¿½ï¿½Ö´ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½Îª
+4ï¿½ï¿½rootï¿½ï¿½Ñ¡ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½addsibling
 */
 void project_edit::add_model(){
 	OPENFILENAME ofn = { sizeof(OPENFILENAME) };
@@ -171,6 +171,11 @@ bool allow_add_item( string& parent_type_name, string& child_type_name )
 		  { "ft_light_scene", "ft_trans" },
 		  { "ft_light_scene", "ft_4_time_curve_3d" },
 		  { "ft_trans", "ft_color_node" },
+            {"ft_trans","ft_color_mesh"},
+            {"ft_trans","ft_1_texture_mesh"},
+            {"ft_trans","ft_1_texture_node"},
+            {"ft_trans","ft_rectangle_3d"},
+            {"ft_trans","ft_trans"},
 		  { "ft_color_node", "ft_trans" },
 		  { "ft_color_node", "ft_color_node" },
           { "ft_modeling_3d", "ft_trans" },
@@ -184,8 +189,7 @@ bool allow_add_item( string& parent_type_name, string& child_type_name )
           { "ft_listbox_ex", "ft_button" },
           { "ft_listbox_ex", "ft_secne" },
      };
-     if( parent_type_name == "ft_trans" 
-         || parent_type_name == "ft_hud_obj_3d" 
+     if( parent_type_name == "ft_hud_obj_3d" 
          || parent_type_name == "ft_hud_4_time_curve_3d" )
      {
           return false;
@@ -433,13 +437,13 @@ void project_edit::popup_context_menu()
 			delete_item();
 		}
 		//char str_up[] = {  0x21,0x91, 0 };
-		string str_up = wstringToUtf8( wstring( L"¡ü" ) );
+		string str_up = wstringToUtf8( wstring( L"ï¿½ï¿½" ) );
 		if( ImGui::MenuItem( "up", str_up.c_str()) )
 		{
 			move_item_pre();
 		}
 		//char str_dn[] = { 0x21, 0x93, 0 };
-		string str_dn = wstringToUtf8( wstring( L"¡ý" ) );
+		string str_dn = wstringToUtf8( wstring( L"ï¿½ï¿½" ) );
 		if( ImGui::MenuItem( "down", str_dn.c_str() ) )
 		{
 			move_item_next();
