@@ -2,41 +2,31 @@
 
 const char *single_txt;
 const char *single_txt_vs = R"glsl(#version 300 es
-
+precision mediump float;
 in vec3 position;
-in vec3 color;
+in vec3 normal;
 in vec2 textCoord;
 
-out vec3 VertColor;
 out vec2 TextCoord;
-uniform mat4 trans;
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+uniform float voffset;
 void main()
 {
-	gl_Position = trans*vec4(position, 1.0);
-	VertColor = color;
-	TextCoord = textCoord;
+    vec3 cpos = position * length(normal);
+	gl_Position = projection * view * model * vec4(cpos, 1.0);
+	TextCoord = vec2(textCoord.x,textCoord.y + voffset);
 }
 )glsl";
 const char *single_txt_fs = R"glsl(#version 300 es
-
-in vec3 VertColor;
+precision mediump float;
 in vec2 TextCoord;
-
 uniform sampler2D tex1;
-uniform sampler2D tex2;
-uniform float mixValue;
-
 out vec4 color;
-
-
 void main()
 {
-	vec4 color1 = texture(tex1, TextCoord);
-	//vec4 color2 = texture(tex2, vec2(TextCoord.s, 1.0 - TextCoord.t));
-	
-	//vec4 color2= texture(tex2, TextCoord);
-	//color = mix(color1, color2, mixValue);
-	color=color1;
+	color = texture(tex1, TextCoord);
 }
 )glsl";
 

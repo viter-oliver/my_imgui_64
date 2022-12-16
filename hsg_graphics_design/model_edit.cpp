@@ -290,7 +290,7 @@ void processMesh(aiMesh *mesh, const aiScene *scene, primitive_object& obj_pm, a
 	material->Get(AI_MATKEY_SHININESS, b_shininess);
 	float b_shininess_strength = 0.f;
 	material->Get(AI_MATKEY_SHININESS_STRENGTH, b_shininess_strength);
-	float b_refracti = 0.f;//ÕÛÉä
+	float b_refracti = 0.f;//ï¿½ï¿½ï¿½ï¿½
 	material->Get(AI_MATKEY_REFRACTI, b_refracti);
 
 	// 1. diffuse maps
@@ -771,8 +771,16 @@ if (!embeded_txt) {
 		{
 			//position
 			pvertexs[i]._pos[0] = mesh->mVertices[i].x;
+			if (pvertexs[i]._pos[0] < x_r[0]) x_r[0] = pvertexs[i]._pos[0];
+			if (pvertexs[i]._pos[0] > x_r[1]) x_r[1] = pvertexs[i]._pos[0];
+
 			pvertexs[i]._pos[1] = mesh->mVertices[i].y;
+			if (pvertexs[i]._pos[1] < y_r[0]) y_r[0] = pvertexs[i]._pos[1];
+			if (pvertexs[i]._pos[1] > y_r[1]) y_r[1] = pvertexs[i]._pos[1];
+
 			pvertexs[i]._pos[2] = mesh->mVertices[i].z;
+			if (pvertexs[i]._pos[2] < z_r[0]) z_r[0] = pvertexs[i]._pos[2];
+			if (pvertexs[i]._pos[2] > z_r[1]) z_r[1] = pvertexs[i]._pos[2];
 			//normals
 			pvertexs[i]._nms[0] = mesh->mNormals[i].x;
 			pvertexs[i]._nms[1] = mesh->mNormals[i].y;
