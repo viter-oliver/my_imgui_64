@@ -14,11 +14,11 @@ imgui
 soil
 misc/freetype
 simple_http
-${mgui_SOUEC_DIR}../boost_1_79_0
-${mgui_SOUEC_DIR}../json-3.10.5/single_include
-${mgui_SOUEC_DIR}../msgpack-c
-${mgui_SOUEC_DIR}../assimp-5.2.4/include
-${mgui_SOUEC_DIR}../freetype-2.6.5/include
+../boost_1_79_0
+../json-3.10.5/single_include
+../msgpack-c
+../assimp-5.2.4/include
+../freetype-2.6.5/include
 )
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/running)
 add_compile_definitions(_GLFW_WIN32 
@@ -92,6 +92,7 @@ add_executable(HSG ${lua_src} ${lua_h} ${hsg_src} ${hsg_h}
  target_compile_definitions(HSG_LIB PRIVATE 
  IMGUI_DISABLE_DEMO_WINDOWS BUILD_DLL)
  add_subdirectory(demo)
+ add_subdirectory(compositionGame)
 
 
 

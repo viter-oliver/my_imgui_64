@@ -11,7 +11,7 @@ namespace auto_future
      ft_essay::~ft_essay()
      {}
      static default_random_engine generator;
-     static uniform_real_distribution<float> distribution( 0, 1.f );
+     static uniform_real_distribution<float> distribution( 0.5, 1.f );
 
      void ft_essay::load_content( wstring& str_content )
      {
@@ -38,7 +38,7 @@ namespace auto_future
                     float g = distribution( generator );
                     float b = distribution( generator );
 
-                    pnew_sentence->set_txt_clr( r, g,b,1.f );
+                    pnew_sentence->set_txt_clr( r,g,b,1.f );
                     pnew_sentence->load_idx = chd_cnt++;
                     add_child( pnew_sentence );
                     wsparagraph.clear();
@@ -46,6 +46,11 @@ namespace auto_future
                else if( ch == 0xd&& wsparagraph.size()>0)
                {
                     auto pnew_sentence = new ft_sentence( _pfont_unit, wsparagraph );
+					float r = distribution(generator);
+					float g = distribution(generator);
+					float b = distribution(generator);
+
+					pnew_sentence->set_txt_clr(r, g, b, 1.f);
                     pnew_sentence->load_idx = chd_cnt++;
                     add_child( pnew_sentence );
                     wsparagraph = ch;
@@ -72,6 +77,7 @@ namespace auto_future
           for (auto ich:_vchilds)
           {
                ft_sentence* pstc = static_cast<ft_sentence*>( ich );
+			   pstc->set_font_size(font_size);
                pstc->init_edge( l_edge, r_edge );
                pstc->line_spacing = line_spacing;
                if (pstc->is_head_of_a_paragraph())

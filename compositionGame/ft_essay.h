@@ -13,6 +13,7 @@ namespace auto_future
      public:
           float hmargin = { 20.f }, vmargin = { 30.f }, line_spacing = {10.f};
           int consume_seconds = 0;
+		  int font_size = 20;
           string game_state;
           ft_essay();
           ~ft_essay();

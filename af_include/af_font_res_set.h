@@ -142,6 +142,79 @@ namespace auto_future
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
+		void load_char(FT_Face&fontFace, txt_font_repository&fp, wchar_t& wch){
+			dic_glyph_txt& container = fp._dic_txt_cd;
+			GLint& max_bearingy = fp._max_bearingy;
+			GLuint& txtid = fp._txt_id;
+			assert(txtid&&"you must pass a valid texture id into the function load_char!");
+			af_vui2& border = fp._border;
+			af_vi2& txt_size = fp._txt_size;
+			GLuint& fontSize = fp._font_size;
+			bool& be_full = fp._be_full;
+
+			glBindTexture(GL_TEXTURE_2D, txtid);
+			auto& face = fontFace;
+			FT_Set_Pixel_Sizes(face, 0, fontSize);
+			if (FT_Load_Char(face, wch, FT_LOAD_RENDER))
+			{
+				wprintf(L"fail to find %c in font face ", wch);
+				return;
+			}
+			auto tw = face->glyph->bitmap.width;
+			auto th = face->glyph->bitmap.rows;
+			auto lt = face->glyph->bitmap_left;
+			auto tp = face->glyph->bitmap_top;
+			if (tp > max_bearingy)
+			{
+				max_bearingy = tp;
+			}
+			auto ad = face->glyph->advance.x;
+			float x0 = (float)border.x / (float)txt_size.x;
+			float y0 = (float)border.y / (float)txt_size.y;
+
+			auto& tbuff = face->glyph->bitmap.buffer;
+			auto txt_sz = tw*th * 4;
+			uint32_t* prgba = new uint32_t[txt_sz];
+			memset(prgba, 0xff, txt_sz);
+			convert_r_to_rgba(tbuff, prgba, tw*th);
+
+			float left_x = border.x + tw;
+			float next_x = left_x + 2;
+			if (next_x <= txt_size.x)
+			{
+				glTexSubImage2D(GL_TEXTURE_2D, 0, border.x, border.y, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, prgba);
+				border.x = next_x;
+			}
+			else
+			{
+				border.y += fontSize;
+				border.y += 2;
+				if ((border.y + th) > txt_size.y)// is full
+				{
+					fprintf(stderr, "font glyph repository of control is full!\n");
+					be_full = true;
+					delete[] prgba;
+					return;
+				}
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, border.y, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, prgba);
+				border.x = tw + 2;
+				x0 = 0.f;
+				y0= (float)border.y / (float)txt_size.y;
+				left_x=tw;
+			}
+			float x1 = (float)left_x / (float)txt_size.x;
+			float y1 = (float)(th + border.y) / (float)txt_size.y;
+			//border.x += 5;
+			delete[] prgba;
+
+			txt_coordinate txt_unit = {
+				{ tw, th },
+				{ lt, tp },
+				ad,
+				x0, y0, x1, y1
+			};
+			container[wch] = txt_unit;
+		}
 		void load_chars(FT_Face&fontFace, txt_font_repository&fp, wstring& wchar_list )
 		{
 			dic_glyph_txt& container = fp._dic_txt_cd;
@@ -213,6 +286,9 @@ namespace auto_future
 					}
 					glTexSubImage2D(GL_TEXTURE_2D, 0, 0, border.y, tw, th, GL_RGBA, GL_UNSIGNED_BYTE, prgba);
 					border.x = tw + 2;
+					x0 = 0.f;
+					y0 = (float)border.y / (float)txt_size.y;
+					left_x = tw;
 				}
 				float x1 = (float)left_x / (float)txt_size.x;
 				float y1 = (float)(th + border.y) / (float)txt_size.y;

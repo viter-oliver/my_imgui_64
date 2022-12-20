@@ -193,10 +193,10 @@ namespace auto_future
                init_txt_font_repository( fontSize, f_u._ft_rep[ fontSize ] );
                pfrp = &f_u._ft_rep[ fontSize ];
           }
-          if( !pfrp->_be_full )
+          /*if( !pfrp->_be_full )
           {
                load_chars( f_u._ft_face, *pfrp, str_content );
-          }
+          }*/
           max_beary = pfrp->_max_bearingy;
           end_pos = start_pos;
           float base_line = start_pos.y + (float)max_beary;
@@ -208,55 +208,68 @@ namespace auto_future
           bool be_first_return=true;
           for( auto& wstr_item : str_content )
           {
-               const auto& glyph_txt_it = txt_cd_container.find( wstr_item );
-               if( glyph_txt_it != txt_cd_container.end() )
+               auto glyph_txt_it = txt_cd_container.find( wstr_item );
+               if( glyph_txt_it == txt_cd_container.end() )
                {
-                    auto& glyph_txt_cd = glyph_txt_it->second;
-                    auto bearing = glyph_txt_cd._bearing;
-                    auto tsize = glyph_txt_cd._size;
-                    float x0 = glyph_txt_cd._x0;
-                    float x1 = glyph_txt_cd._x1;
-                    float y0 = glyph_txt_cd._y0;
-                    float y1 = glyph_txt_cd._y1;
-                    auto advance = glyph_txt_cd._advance;
-                    auto bearing_x = bearing.x*scale;
-                    float char_left_edge = end_pos.x + bearing_x;
-                    float char_right_edge = char_left_edge + tsize.x*scale;// +bearing_x_n;
-                    cnt_char++;
-                    if( char_right_edge > r_bottom_edge.x )
-                    {
-                         end_pos.x = l_top_edge.x;
+				   if (!pfrp->_be_full)
+				   {
+					   load_char(f_u._ft_face, *pfrp, wstr_item);
+					   glyph_txt_it = txt_cd_container.find(wstr_item);
+					   if (glyph_txt_it == txt_cd_container.end()){
+						   continue;
+					   }
+				   } else {
+					   continue;
+				   }
+			   }
 
-                         base_line = base_line + max_beary + line_spacing;
-                         char_left_edge = end_pos.x + bearing.x*scale;
-                         char_right_edge = char_left_edge + tsize.x*scale;
-                         auto new_top = base_line - max_beary;
-                         if (be_first_return)
-                         {
-                              be_first_return = false;
-                              l_top_edge.y = new_top;
-                         }
-                         r_bottom_edge.y = new_top;
-                    }
-                    ImVec2 pos0 { char_left_edge, base_line - bearing.y*scale };
-                    ImVec2 pos1 { pos0.x, pos0.y + tsize.y*scale };
-                    ImVec2 pos2 { char_right_edge, pos1.y };
-                    ImVec2 pos3 { pos2.x, pos0.y };
-                    ImVec2 uv0 { x0, y0 };
-                    ImVec2 uv1 { x0, y1 };
-                    ImVec2 uv2 { x1, y1 };
-                    ImVec2 uv3 { x1, y0 };
-                    ImVec4 dcol { txt_col.x, txt_col.y, txt_col.z, txt_col.w };
-                    if( !be_new )
-                         ImageQuad( (ImTextureID)txt_id, pos0, pos1, pos2, pos3, uv0, uv1, uv2, uv3, dcol );
-                    float shift_dis = ( advance >> 6 )*scale;// Bitshift by 6 to get value in pixels (2^6 = 64)
-                    //end_pos.x += bearing_x_n;
-                    end_pos.x += shift_dis;
-                    if( maxy < pos1.y )
-                    {
-                         maxy = pos1.y;
-                    }
-               }
+
+				auto& glyph_txt_cd = glyph_txt_it->second;
+				auto bearing = glyph_txt_cd._bearing;
+				auto tsize = glyph_txt_cd._size;
+				float x0 = glyph_txt_cd._x0;
+				float x1 = glyph_txt_cd._x1;
+				float y0 = glyph_txt_cd._y0;
+				float y1 = glyph_txt_cd._y1;
+				auto advance = glyph_txt_cd._advance;
+				auto bearing_x = bearing.x*scale;
+				float char_left_edge = end_pos.x + bearing_x;
+				float char_right_edge = char_left_edge + tsize.x*scale;// +bearing_x_n;
+				cnt_char++;
+				if( char_right_edge > r_bottom_edge.x )
+				{
+						end_pos.x = l_top_edge.x;
+
+						base_line = base_line + max_beary + line_spacing;
+						char_left_edge = end_pos.x + bearing.x*scale;
+						char_right_edge = char_left_edge + tsize.x*scale;
+						auto new_top = base_line - max_beary;
+						if (be_first_return)
+						{
+							be_first_return = false;
+							l_top_edge.y = new_top;
+						}
+						r_bottom_edge.y = new_top;
+				}
+				ImVec2 pos0 { char_left_edge, base_line - bearing.y*scale };
+				ImVec2 pos1 { pos0.x, pos0.y + tsize.y*scale };
+				ImVec2 pos2 { char_right_edge, pos1.y };
+				ImVec2 pos3 { pos2.x, pos0.y };
+				ImVec2 uv0 { x0, y0 };
+				ImVec2 uv1 { x0, y1 };
+				ImVec2 uv2 { x1, y1 };
+				ImVec2 uv3 { x1, y0 };
+				ImVec4 dcol { txt_col.x, txt_col.y, txt_col.z, txt_col.w };
+				if( !be_new )
+						ImageQuad( (ImTextureID)txt_id, pos0, pos1, pos2, pos3, uv0, uv1, uv2, uv3, dcol );
+				float shift_dis = ( advance >> 6 )*scale;// Bitshift by 6 to get value in pixels (2^6 = 64)
+				//end_pos.x += bearing_x_n;
+				end_pos.x += shift_dis;
+				if( maxy < pos1.y )
+				{
+						maxy = pos1.y;
+				}
+               
           }
           end_pos.y = base_line + max_beary;
 
