@@ -429,6 +429,18 @@ namespace auto_future
 			pchild->_parent = this; 
 			_vchilds.push_back(pchild); 
 		}
+		void switch_chd(int ix0, int ix1) { 
+			auto chd_cnt = _vchilds.size();
+                  if (ix0 >= chd_cnt || ix1 >= chd_cnt) {
+                          return;
+                  }
+                  auto pchd0 = _vchilds[ix0];
+                  auto pchd1 = _vchilds[ix1];
+                  _vchilds[ix1] = pchd0;
+                  _vchilds[ix0] = pchd1;
+
+		}
+
           virtual void insert_child( int index, base_ui_component* pchild )
           {
                pchild->_parent = this;

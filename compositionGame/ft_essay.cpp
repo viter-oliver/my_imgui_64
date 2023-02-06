@@ -1,5 +1,6 @@
 #include "ft_essay.h"
 #include "ft_sentence.h"
+#include "ft_paragraph.h"
 #include <random>
 #include <algorithm>
 namespace auto_future
@@ -15,7 +16,7 @@ namespace auto_future
 
      void ft_essay::load_content( wstring& str_content )
      {
-          if( !_pfont_unit )
+          if( !_pfont_unit ||!str_content.size())
           {
                return;
           }
@@ -26,39 +27,56 @@ namespace auto_future
                it_child = _vchilds.erase( it_child );
           }
           wstring wsparagraph;
-          int chd_cnt = 0;
+          auto pnew_paragraph = new ft_paragraph();
+
+          int chd_cnt = 0, chd_pcnt = 0;
+          auto add_sentaence_2_paragraph = [&] {
+            auto pnew_sentence = new ft_sentence(_pfont_unit, wsparagraph);
+            float r = distribution(generator);
+            float g = distribution(generator);
+            float b = distribution(generator);
+
+            pnew_sentence->set_txt_clr(r, g, b, 1.f);
+            pnew_sentence->load_idx = chd_cnt++;
+            pnew_paragraph->add_child(pnew_sentence);
+            wsparagraph.clear();
+          };
+          auto set_paragraph_border_col = [&] {
+            float r = distribution(generator);
+            float g = distribution(generator);
+            float b = distribution(generator);
+            pnew_paragraph->set_border_color(r, g, b, 1);
+          };
           srand( unsigned( time( 0 ) ) );
-          for (auto& ch:str_content)
-          {
-               if( ch == 0x3002|| ch ==0x230)
-               {
-                    wsparagraph += ch;
-                    auto pnew_sentence = new ft_sentence( _pfont_unit, wsparagraph );
-                    float r = distribution( generator );
-                    float g = distribution( generator );
-                    float b = distribution( generator );
-
-                    pnew_sentence->set_txt_clr( r,g,b,1.f );
-                    pnew_sentence->load_idx = chd_cnt++;
-                    add_child( pnew_sentence );
-                    wsparagraph.clear();
-               }
-               else if( ch == 0xd&& wsparagraph.size()>0)
-               {
-                    auto pnew_sentence = new ft_sentence( _pfont_unit, wsparagraph );
-					float r = distribution(generator);
-					float g = distribution(generator);
-					float b = distribution(generator);
-
-					pnew_sentence->set_txt_clr(r, g, b, 1.f);
-                    pnew_sentence->load_idx = chd_cnt++;
-                    add_child( pnew_sentence );
-                    wsparagraph = ch;
-               }
-               else
-               {
-                    wsparagraph += ch;
-               }
+          for (int ix = 0; ix < str_content.size();ix++) {
+            auto& ch = str_content[ix];
+            if (ch == 0x3002) {
+              wsparagraph += ch;
+              if (ix < str_content.size() - 1 &&
+                  str_content[ix + 1] == 0x201d) {
+                wsparagraph += str_content[ix + 1];
+                ix++;
+              }
+              add_sentaence_2_paragraph();
+            } else if (ch == 0xa) {
+              if (wsparagraph.size() > 0) {
+                add_sentaence_2_paragraph();
+              }
+              chd_cnt = 0;
+              pnew_paragraph->load_idx = chd_pcnt++;
+              set_paragraph_border_col();
+              add_child(pnew_paragraph);
+              pnew_paragraph = new ft_paragraph();
+            } else if (ch !='\r') {
+              wsparagraph += ch;
+            }
+          }
+          if (pnew_paragraph->get_child_count() > 0) {
+            pnew_paragraph->load_idx = chd_pcnt;
+            set_paragraph_border_col();
+            add_child(pnew_paragraph);
+          } else {
+            delete pnew_paragraph;
           }
      }
 
@@ -73,53 +91,68 @@ namespace auto_future
           auto l_edge = hmargin+winpos.x;
           auto r_edge = wsz.x - hmargin+winpos.x;
           af_vec2 draw_pos = {hmargin,vmargin};
-          af_vec2 prev_end_pos;
-          for (auto ich:_vchilds)
-          {
-               ft_sentence* pstc = static_cast<ft_sentence*>( ich );
-			   pstc->set_font_size(font_size);
-               pstc->init_edge( l_edge, r_edge );
-               pstc->line_spacing = line_spacing;
-               if (pstc->is_head_of_a_paragraph())
-               {
-                    draw_pos.x = hmargin;
-                    draw_pos.y = prev_end_pos.y - winpos.y + _in_p._posy;
-               }
-               pstc->set_base_pos( draw_pos.x, draw_pos.y );
-               pstc->draw();
-               draw_pos.x = pstc->_endpos.x-winpos.x+_in_p._posx;
-               prev_end_pos = pstc->_endpos;
-               if (!pstc->is_same_line())
-               {
-                    draw_pos.y = pstc->_r_bottom_edge.y - winpos.y + _in_p._posy;;
-               }
+          auto para_width = r_edge - l_edge;
+          int ip = 0;
+          auto font_height=font_size + line_spacing;
+          for (auto& ipa:_vchilds) {
+            ft_paragraph* ppara = static_cast<ft_paragraph*>(ipa);
+            ppara->set_base_pos(draw_pos.x, draw_pos.y);
+            af_vec2 spos = {20, 20};
+            float p_bottom = 0;
+            for (int ix = 0; ix < ppara->get_child_count(); ix++) {
+                ft_sentence* pstc = static_cast<ft_sentence*>(ppara->get_child(ix));
+			    pstc->set_font_size(font_size);
+                pstc->init_edge( l_edge, r_edge );
+                pstc->line_spacing = line_spacing;
+                pstc->set_base_pos( spos.x, spos.y );
+                pstc->draw();
+                spos.x = pstc->_endpos.x-winpos.x+_in_p._posx;
+                if (!pstc->is_same_line())
+                {
+                  spos.y += pstc->delta_height;  // +_in_p._posy;
+                }
+                p_bottom = pstc->_endpos.y;
+            }
+            ip++;
+            auto para_height = p_bottom - draw_pos.y-winpos.y;
+            draw_pos.x = hmargin;
+            draw_pos.y += para_height;
+            ppara->set_size(para_width, para_height);
+            ppara->draw();
           }
           ImGuiContext& g = *GImGui;
           ImGuiWindow* cur_window = ImGui::GetCurrentWindow();
           ImGuiWindow* front_window = g.Windows.back();
           ImRect wrect( cur_window->Pos, cur_window->Pos + cur_window->Size );
-          auto swap_ui = [&]( base_ui_component* pui1, base_ui_component*pui2 )
+          function<void(base_ui_component*, base_ui_component*)> swap_ui =
+              [&](base_ui_component* pui1,base_ui_component* pui2)
           {
-               int isiz = _vchilds.size();
-               int i1, i2;
-               i1 = i2 = -1;
-               for( int it = 0; it < isiz; it++ )
-               {
-                    if( _vchilds[ it ] == pui1 )
-                    {
-                         i1 = it;
-                    }
-                    if( _vchilds[ it ] == pui2 )
-                    {
-                         i2 = it;
-                    }
-                    if( i1 != -1 && i2 != -1 )
-                    {
-                         break;
-                    }
-               }
-               _vchilds[ i2 ] = pui1;
-               _vchilds[ i1 ] = pui2;
+            auto pparent1 = pui1->get_parent();
+            auto pparent2 = pui2->get_parent();
+            if (!pparent1 || !pparent2) {
+              return;
+            }
+            if (pparent1 !=pparent2) {
+              swap_ui(pparent1, pparent2);
+            } else {
+              int isiz = pparent1->get_child_count();
+              int i1, i2;
+              i1 = i2 = -1;
+              for (int it = 0; it < isiz; it++) {
+                auto pchd = pparent1->get_child(it);
+                if (pchd == pui1) {
+                  i1 = it;
+                }
+                if (pchd == pui2) {
+                  i2 = it;
+                }
+                if (i1 != -1 && i2 != -1) {
+                  break;
+                }
+              }
+              pparent1->switch_chd(i1, i2);
+            }
+               
           };
            if( cur_window == front_window && wrect.Contains( ImGui::GetIO().MousePos ) )
           {
@@ -133,7 +166,8 @@ namespace auto_future
                if( psel_ui&&ImGui::IsMouseReleased( 0 ) )
                {
                     base_ui_component* phit = get_hit_ui_object( io.MousePos.x, io.MousePos.y );
-                    if (phit)
+                    
+                    if (phit!=psel_ui&&typeid(*phit)!=typeid(psel_ui))
                     {
                          swap_ui( psel_ui, phit );
                          psel_ui = nullptr;
@@ -180,6 +214,10 @@ namespace auto_future
           _play_start = steady_clock::now();
           consume_seconds = 0;
           srand( unsigned( time( 0 ) ) );
+          for (auto&chd : _vchilds) {
+            ft_paragraph* ppara = static_cast<ft_paragraph*>(chd);
+            ppara->shuffle();
+          }
           random_shuffle( _vchilds.begin(), _vchilds.end() );
      }
 
@@ -188,12 +226,12 @@ namespace auto_future
           int ix = 0;
           for (auto& itc:_vchilds)
           {
-               ft_sentence* pst = static_cast<ft_sentence*>( itc );
-               if( pst->load_idx !=ix)
-               {
-                    return false;
-               }
-               ix++;
+            ft_paragraph* pst = static_cast<ft_paragraph*>(itc);
+            if (!pst->orignal_order() || pst->load_idx != ix)
+            {
+                return false;
+            }
+            ix++;
           }
           return true;
      }

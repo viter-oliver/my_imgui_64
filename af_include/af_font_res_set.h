@@ -398,7 +398,10 @@ namespace auto_future
                             af_vec2& start_pos, af_vec2& end_pos,
                             GLfloat scale, wstring& str_content,
                             const af_vec4& txt_col, af_vec2&l_top_edge, 
-                            af_vec2&r_bottom_edge, float& line_spacing, bool be_new );
+                            af_vec2& r_bottom_edge,
+                           float& line_spacing, 
+			               float& delta_height,
+                           bool be_new);
      };
 
 	extern shared_ptr<font_face_manager> g_pfont_face_manager;

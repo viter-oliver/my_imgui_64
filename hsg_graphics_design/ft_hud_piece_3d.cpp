@@ -71,8 +71,7 @@ namespace auto_future
 
      void ft_hud_piece_3d::draw()
      {
-		 if (!_pat_image)
-          {
+		  if (!_pat_image){
                return;
           }
           ft_hud_projector* p_prj = (ft_hud_projector*)get_parent();

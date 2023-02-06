@@ -99,7 +99,7 @@ namespace auto_future
                     }
 #endif
 				float char_left_edge = end_pos.x + bearing_x;
-                    float char_right_edge = char_left_edge + tsize.x*scale;// +bearing_x_n;
+                float char_right_edge = char_left_edge + tsize.x*scale;// +bearing_x_n;
 				cnt_char++;
 				if (char_right_edge>str_most_right_edge)
 				{
@@ -175,7 +175,8 @@ namespace auto_future
                                           const af_vec4& txt_col,
                                           af_vec2&l_top_edge,
                                           af_vec2&r_bottom_edge,
-                                          float& line_spacing,
+                                          float& line_spacing, 
+		                                  float& delta_height,
                                           bool be_new )
      {
           txt_font_repository* pfrp = nullptr;
@@ -239,7 +240,7 @@ namespace auto_future
 				if( char_right_edge > r_bottom_edge.x )
 				{
 						end_pos.x = l_top_edge.x;
-
+                        delta_height = delta_height + max_beary + line_spacing;
 						base_line = base_line + max_beary + line_spacing;
 						char_left_edge = end_pos.x + bearing.x*scale;
 						char_right_edge = char_left_edge + tsize.x*scale;
@@ -261,7 +262,7 @@ namespace auto_future
 				ImVec2 uv3 { x1, y0 };
 				ImVec4 dcol { txt_col.x, txt_col.y, txt_col.z, txt_col.w };
 				if( !be_new )
-						ImageQuad( (ImTextureID)txt_id, pos0, pos1, pos2, pos3, uv0, uv1, uv2, uv3, dcol );
+					ImageQuad( (ImTextureID)txt_id, pos0, pos1, pos2, pos3, uv0, uv1, uv2, uv3, dcol );
 				float shift_dis = ( advance >> 6 )*scale;// Bitshift by 6 to get value in pixels (2^6 = 64)
 				//end_pos.x += bearing_x_n;
 				end_pos.x += shift_dis;

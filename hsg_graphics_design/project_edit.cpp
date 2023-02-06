@@ -161,6 +161,7 @@ bool allow_add_item( string& parent_type_name, string& child_type_name )
         { "ft_scene", "ft_particles_3d" },
         { "ft_scene", "ft_particles_effect_3d" },
         { "ft_scene", "ft_particles1_3d" },
+        { "ft_scene", "ft_distortion" },
         { "ft_hud_projector", "ft_hud_obj_3d" },
         { "ft_hud_projector", "ft_hud_object_3d" },
         { "ft_hud_projector", "ft_hud_piece_3d" },

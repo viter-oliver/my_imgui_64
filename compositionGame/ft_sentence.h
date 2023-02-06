@@ -14,6 +14,7 @@ namespace auto_future
      public:
           int load_idx = { 0 };
           float line_spacing = {0.f};
+          float delta_height;
           af_vec2 _endpos;
           af_vec2 _l_top_edge, _r_bottom_edge;
           ft_sentence( ps_font_unit& pfont, wstring wssentence );
@@ -37,7 +38,6 @@ namespace auto_future
           }
           bool contains( float posx, float posy );
           void draw();
-          bool is_head_of_a_paragraph();
           bool is_same_line();
      };
 }
