@@ -1,5 +1,5 @@
 #include <cmath>
-#include "ft_1_texture_mesh.h"
+#include "ft_texture_progress.h"
 #include "af_primitive_object.h"
 #include "ft_light_scene.h"
 #include "ft_trans.h"
@@ -7,14 +7,14 @@
 #include "af_shader_source_code.h"
 namespace auto_future
 {
-	ps_shader ft_1_texture_mesh::_ptxt_node_sd = nullptr;
-     ft_1_texture_mesh::ft_1_texture_mesh()
+	ps_shader ft_texture_progress::_ptxt_node_sd = nullptr;
+     ft_texture_progress::ft_texture_progress()
      {
 		 _pt._attached_txt[0] = '\0';
 		 _pt._attached_obj[0] = '\0';
-		 if (!ft_1_texture_mesh::_ptxt_node_sd)
+		 if (!ft_texture_progress::_ptxt_node_sd)
 		 {
-			 ft_1_texture_mesh::_ptxt_node_sd = make_shared<af_shader>(modeling_vs_1_txt, modeling_fs_1_txt);
+			 ft_texture_progress::_ptxt_node_sd = make_shared<af_shader>(modeling_vs_1_txt, modeling_fs_1_txt);
 		 }
 		 
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
@@ -72,7 +72,7 @@ namespace auto_future
 #endif
      }
 
-	 void ft_1_texture_mesh::link(){
+	 void ft_texture_progress::link(){
 		 auto iprm = g_primitive_list.find(_pt._attached_obj);
 		 if (iprm != g_primitive_list.end())
 		 {
@@ -84,7 +84,7 @@ namespace auto_future
 			 _ps_txt = iat->second;
 		 }
 	 }
-	 void ft_1_texture_mesh::draw(){
+	 void ft_texture_progress::draw(){
 		 auto cnt = child_count();
 		 for (int ix = 0; ix < cnt;++ix) {
 			 auto pchild = get_child(ix);

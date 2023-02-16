@@ -1,5 +1,8 @@
-#include "primitve_edit.h"
 #include <string>
+#include <fstream>
+#include <windows.h>
+#include <Commdlg.h>
+#include "primitve_edit.h"
 #include "user_control_imgui.h"
 #include "res_internal.h"
 #ifdef IMGUI_WAYLAND
@@ -10,6 +13,7 @@
 #include <sstream>
 #include "af_type.h"
 #include "common_functions.h"
+#include "primitive_format.h"
 extern void store_to_clipboard(string& str_content);
 enum en_mem_usage
 {
@@ -157,7 +161,69 @@ void primitve_edit::draw_primitive_list()
 		}
 		ImGui::EndPopup();
 	}
-
+    if (ImGui::Button("Import primitive...")) {
+        OPENFILENAME ofn = {sizeof(OPENFILENAME)};
+        ofn.hwndOwner = GetForegroundWindow();
+        const char *prm_format =
+            "ALL Files(*.*)\0*.*\0"
+            "prm\0*.prm\0";
+        ofn.lpstrFilter = prm_format;
+        char strFileName[MAX_PATH] = {0};
+        ofn.nFilterIndex = 1;
+        ofn.lpstrFile = strFileName;
+        ofn.nMaxFile = sizeof(strFileName);
+        ofn.lpstrTitle = "select a prm file please!";
+        ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+        if (GetOpenFileName(&ofn)) {
+		  using namespace auto_future;
+          ifstream fin(strFileName,ios::binary);
+		  primitive_head prm_head;
+          auto fsz = fin.tellg();
+          fin.seekg(0, ios::end);
+          fsz = fin.tellg() - fsz;
+          fin.seekg(0, ios::beg);
+          fin.read((char *)&prm_head, sizeof(primitive_head));
+          pm_format pf(prm_head.demension);
+          get_pm_format(prm_head.format_index, pf);
+          dub ulen = 0;
+          for (auto &pu : pf) {
+            ulen += pu;
+		  }
+          auto rsz = ulen * sizeof(float) * prm_head.size;
+          int cal_sz = rsz + sizeof(primitive_head);
+          if (fsz != cal_sz) {
+            int filesz = fsz;
+            printf("because %d!=%d,the file is invalid!\n", filesz, cal_sz);
+		  } else {
+            string prm_path = strFileName;
+            string prm_name = prm_path.substr(prm_path.find_last_of('\\') + 1);
+            prm_name = find_a_key_from_mp(g_primitive_list, prm_name);
+            prm_name = find_a_key_from_mp(g_mfiles_list, prm_name);
+            auto pmtv = make_shared<primitive_object>();
+            pmtv->set_ele_format(pf);
+            auto stride = pmtv->get_stride();
+            auto vlen = stride * prm_head.size;
+            GLfloat *pvertex = new GLfloat[vlen];
+            memset(pvertex, 0, vlen * sizeof GLfloat);
+            auto mem_usage = mem_usage_item[mem_usage_idx].mem_usage;
+            fin.read((char*)pvertex, rsz);
+            pmtv->load_vertex_data(pvertex, vlen, 0, 0, mem_usage);
+            g_primitive_list[prm_name] = pmtv;
+            auto buff_len = 4 + vlen * sizeof(GLfloat);
+            ps_af_file ps_file = make_shared<af_file>(buff_len);
+            char *phead = (char *)ps_file->_pbin;
+            GLuint *phead_len = (GLuint *)phead;
+            *phead_len = buff_len - 4;
+            phead += 4;
+            memcpy(phead, pvertex, *phead_len);
+            g_mfiles_list[prm_name] = ps_file;
+            pmtv->_ps_file = ps_file;
+            save_ojfile_to_file(prm_name);
+            delete[] pvertex;
+          }
+        }
+                    
+	}
 	ImGuiTreeNodeFlags node_flag = ImGuiTreeNodeFlags_DefaultOpen;
 	string icon_str = icn_primitive;
 	if (IconTreeNode(icon_str, "primitive objects", node_flag))

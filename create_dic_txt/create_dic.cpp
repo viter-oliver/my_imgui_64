@@ -14,7 +14,7 @@ void create_dic(raw_image::img_raw& input_image, txt_dic& output_txt_dic) {
 	//detect ideal area
 	int col_left = -1, col_right = -1, row_top = -1, row_bottom = -1;
 	{
-		auto col_is_within_area = [input_image, height](int ix) {
+		auto col_is_within_area = [&](int ix) {
 			for (int ii = 0; ii < height; ++ii) {
 				if (!approximate(input_image[ii][ix].b, ref_b)) {
 					return false;
@@ -34,7 +34,7 @@ void create_dic(raw_image::img_raw& input_image, txt_dic& output_txt_dic) {
 			}
 		}
 
-		auto row_is_within_area = [input_image, width](int iy) {
+		auto row_is_within_area = [&](int iy) {
 			for (int ii = 0; ii < width; ++ii) {
 				if (!approximate(input_image[iy][ii].b, ref_b)) {
 					return false;

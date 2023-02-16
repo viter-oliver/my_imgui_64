@@ -95,6 +95,8 @@ add_executable(HSG ${lua_src} ${lua_h} ${hsg_src} ${hsg_h}
  add_subdirectory(compositionGame)
  add_subdirectory(create_bmp)
  add_subdirectory(create_dic_txt)
+ add_subdirectory(create_primitive_format_table)
+ add_subdirectory(change_lane_prm)
 
 
 

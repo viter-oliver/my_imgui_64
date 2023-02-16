@@ -1,0 +1,1 @@
+add_executable(create_pf_tb create_primitive_format_table.cpp)

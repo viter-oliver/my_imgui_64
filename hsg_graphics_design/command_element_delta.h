@@ -50,7 +50,8 @@ namespace auto_future
           }
 		void create_command(edit_commd<T>& ecommd)
 		{
-			if (_cur_command_id<_edit_command_list.size()-1)
+            if (_edit_command_list.size()
+                    &&_cur_command_id < _edit_command_list.size() - 1)
 			{
 				_edit_command_list.erase(_edit_command_list.begin() + _cur_command_id, _edit_command_list.end());
 			}

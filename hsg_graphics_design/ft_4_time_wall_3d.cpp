@@ -1,7 +1,7 @@
-#include "ft_4_time_curve_3d.h"
+#include "ft_4_time_wall_3d.h"
 #include "ft_light_scene.h"
 
-static const char* sd_4_curve_vs = R"glsl(
+const char* sd_4_wall_vs = R"glsl(
 #version 300 es
 precision mediump float;
 layout(location=0) in vec3 position;
@@ -11,71 +11,48 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform float c[4];
-uniform float w;
-uniform int left_boder;
-uniform float voffset;
+uniform float h;
+uniform float of;
 void main()
 {
     vec3 pos=position;
-    float posx0=pos.x;
+    float posy0=pos.y;
     float z=pos.z;
-    if(left_boder>0)
-    {
-         if(posx0<0.1)
-         {
-              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0]-w;
-         }
-         else
-         {
-              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0];
-         }
+    pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0]+of;
+    if(posy0>0.1){
+       pos.y=h;
     }
-    else
-    {
-         if(posx0<0.1)
-         {
-              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0];
-         }
-         else
-         {
-              pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0]+w;
-         }
-
-    } 
+    
     gl_Position = projection * view * model * vec4(pos, 1.0);
-    TextCoord = vec2(textCoord.x,textCoord.y + voffset);
+    TextCoord = textCoord;
 }
 )glsl";
-static const char* sd_4_curve_fs = R"glsl(
+const char* sd_4_wall_fs = R"glsl(
 #version 300 es
 precision mediump float;
 in vec2 TextCoord;
 out vec4 o_clr;
-uniform vec3 lane_color;
 uniform sampler2D text_at;
 void main()
 {
-    vec4 base_col = texture(text_at, TextCoord);
-    vec3 caucl_col = base_col.xyz * lane_color;
-    o_clr = vec4(caucl_col,base_col.w);
+	o_clr = texture(text_at, TextCoord);
 }
 )glsl";
 
 namespace auto_future
 {
-     ps_shader ft_4_time_curve_3d::_phud_sd = nullptr;
-     ps_primrive_object ft_4_time_curve_3d::_ps_prm = nullptr;
+     ps_shader ft_4_time_wall_3d::_phud_sd = nullptr;
+     ps_primrive_object ft_4_time_wall_3d::_ps_prm = nullptr;
 
-     ft_4_time_curve_3d::ft_4_time_curve_3d()
+     ft_4_time_wall_3d::ft_4_time_wall_3d()
      {
           /*if( !_phud_sd )
           {
-               _phud_sd = make_shared<af_shader>( sd_4_curve_vs, sd_4_curve_fs );
+               _phud_sd = make_shared<af_shader>( sd_4_wall_vs, sd_4_wall_fs );
           }
         */
 
           _pt_tb._attached_image[ 0 ] = '\0';
-          _pt_tb._lane_clr = { 1.f,1.f,1.f };
           _pt_tb._coeff_hac[ 0 ] = _pt_tb._coeff_hac[ 1 ] = _pt_tb._coeff_hac[ 2 ] = _pt_tb._coeff_hac[ 3 ] = 0.f;
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
           reg_property_handle( &_pt_tb, 0, [this]( void* member_address )
@@ -105,30 +82,29 @@ namespace auto_future
 #endif
      }
 
-     ft_4_time_curve_3d::~ft_4_time_curve_3d()
+     ft_4_time_wall_3d::~ft_4_time_wall_3d()
      {
 
      }
      const int curve_len = 100;
-     const float unit_len = 1.f;// 100.f;// 1000.f;
+	 const float unit_len = 1.f;// 1000.f;
      const int point_cnt = curve_len * 2 + 2;
 
-     void ft_4_time_curve_3d::link()
+     void ft_4_time_wall_3d::link()
      {
           auto iat = g_mtexture_list.find( _pt_tb._attached_image );
           if( iat != g_mtexture_list.end() )
           {
                _pat_image = iat->second;
           }         
-          if( !ft_4_time_curve_3d::_phud_sd )
+          if( !ft_4_time_wall_3d::_phud_sd )
           {
-              ft_4_time_curve_3d::_phud_sd = make_shared<af_shader>( sd_4_curve_vs, sd_4_curve_fs );
-              ft_4_time_curve_3d::_ps_prm = make_shared<primitive_object>();
+              ft_4_time_wall_3d::_phud_sd = make_shared<af_shader>( sd_4_wall_vs, sd_4_wall_fs );
+              ft_4_time_wall_3d::_ps_prm = make_shared<primitive_object>();
               int demension = 5;
               auto data_cnt = point_cnt*demension;
               GLfloat* vertices = new GLfloat[ data_cnt ];
               float uv_unit = 1.f / (float)curve_len;
-              float zmax = 0;
               for( int ix = 0; ix < curve_len + 1; ++ix )
               {
                    auto base_id = ix * 2 * demension;
@@ -138,27 +114,26 @@ namespace auto_future
                    vertices[ base_id + 3 ] = 0;
                    vertices[ base_id + 4 ] = uv_unit * ix;
 
-                   vertices[ base_id + 5 ] = 1;//x->
-                   vertices[ base_id + 6 ] = 0;//y->
+                   vertices[ base_id + 5 ] = 0;//x->
+                   vertices[ base_id + 6 ] = 1;//y->
                    vertices[ base_id + 7 ] = ix*unit_len;//z->
-                   zmax = vertices[base_id + 7];
                    vertices[ base_id + 8 ] = 1;
                    vertices[ base_id + 9 ] = uv_unit * ix;
               }
 
-              ft_4_time_curve_3d::_ps_prm->set_ele_format( { 3, 2 } );
-              ft_4_time_curve_3d::_ps_prm->load_vertex_data( vertices, data_cnt );
+              ft_4_time_wall_3d::_ps_prm->set_ele_format( { 3, 2 } );
+              ft_4_time_wall_3d::_ps_prm->load_vertex_data( vertices, data_cnt );
               delete[] vertices;
           }
      }
 
-     void ft_4_time_curve_3d::draw()
+     void ft_4_time_wall_3d::draw()
      {
           if( !_pat_image )
           {
                return;
           }
-		  ft_light_scene* p_prj = (ft_light_scene*)get_parent();
+          ft_light_scene* p_prj = (ft_light_scene*)get_parent();
           af_vec3* pview_pos = p_prj->get_view_pos();
           af_vec3* pcenter = p_prj->get_center_of_prj();
           af_vec3* pup = p_prj->get_up();
@@ -171,24 +146,21 @@ namespace auto_future
           float w, h;
           p_prj->get_size( w, h );
           float aspect = w / h;
-		  float near_value = _pt_tb._near>0.f ? _pt_tb._near : p_prj->get_near();
-		  float far_value = _pt_tb._far>0.f ? _pt_tb._far : p_prj->get_far();
+		  float near_value = _pt_tb._near > 0.f ? _pt_tb._near : p_prj->get_near();
+		  float far_value = _pt_tb._far > 0.f ? _pt_tb._far : p_prj->get_far();
 
-          glm::mat4 proj = glm::perspective( glm::radians( p_prj->get_fovy() ), aspect, near_value, far_value );
+		  glm::mat4 proj = glm::perspective(glm::radians(p_prj->get_fovy()), aspect, near_value, far_value);
           _phud_sd->uniform( "projection", glm::value_ptr( proj ) );
           glm::mat4 trans;
           trans = glm::translate(
                trans,
                glm::vec3( _pt_tb._tanslation_x, _pt_tb._tanslation_y, _pt_tb._tanslation_z )
                );
-          
           _phud_sd->uniform( "model", glm::value_ptr( trans ) );
           _phud_sd->uniform( "c[0]", _pt_tb._coeff_hac );
-          int ileft_border = _pt_tb._left_border;
-          _phud_sd->uniform( "left_boder", &ileft_border );
-          _phud_sd->uniform( "w", &_pt_tb._width );
-          _phud_sd->uniform("voffset", &_pt_tb._voffset);
-          _phud_sd->uniform("lane_color", (float*) & _pt_tb._lane_clr);
+          _phud_sd->uniform( "h", &_pt_tb._height );
+		  _phud_sd->uniform("of", &_pt_tb._offset );
+
           glActiveTexture( GL_TEXTURE0 );
           glBindTexture( GL_TEXTURE_2D, _pat_image->_txt_id() );
           _phud_sd->uniform( "text_at", 0 );
