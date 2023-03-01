@@ -1,8 +1,7 @@
 #include "ft_4_time_curve_3d.h"
 #include "ft_light_scene.h"
 
-static const char* sd_4_curve_vs = R"glsl(
-#version 300 es
+static const char* sd_4_curve_vs = R"glsl(#version 300 es
 precision mediump float;
 layout(location=0) in vec3 position;
 layout(location=1) in vec2 textCoord;
@@ -46,8 +45,7 @@ void main()
     TextCoord = vec2(textCoord.x,textCoord.y + voffset);
 }
 )glsl";
-static const char* sd_4_curve_fs = R"glsl(
-#version 300 es
+static const char* sd_4_curve_fs = R"glsl(#version 300 es
 precision mediump float;
 in vec2 TextCoord;
 out vec4 o_clr;

@@ -1,8 +1,7 @@
 #include "ft_4_time_wall_3d.h"
 #include "ft_light_scene.h"
 
-const char* sd_4_wall_vs = R"glsl(
-#version 300 es
+const char* sd_4_wall_vs = R"glsl(#version 300 es
 precision mediump float;
 layout(location=0) in vec3 position;
 layout(location=1) in vec2 textCoord;
@@ -27,8 +26,7 @@ void main()
     TextCoord = textCoord;
 }
 )glsl";
-const char* sd_4_wall_fs = R"glsl(
-#version 300 es
+const char* sd_4_wall_fs = R"glsl(#version 300 es
 precision mediump float;
 in vec2 TextCoord;
 out vec4 o_clr;

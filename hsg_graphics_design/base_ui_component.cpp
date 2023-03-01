@@ -8,7 +8,7 @@
 #include "base_prp_type_edit.h"
 #include "common_functions.h"
 #include <regex>
-
+#include "systactic_sugar.h"
 extern bind_edit g_bind_edit;
 extern state_manager_edit g_state_manager_edit;
 extern aliase_edit g_aliase_edit;
@@ -175,8 +175,11 @@ namespace auto_future
 						}
 					}
 					string rg = mname.substr(mname.length() - 3, 3);
-					auto &irg = s_rg_tips.find(rg);
 					value_range _vrange(-screenw, screenw);
+					find_from_mp(_vrange, rg, s_rg_tips)||
+					find_from_mp(_vrange, st_member_key(prop_ele->_pro_address, idx),
+						_mcustom_member_value_ranges_container);
+					/*auto& irg = s_rg_tips.find(rg);
 					if (irg != s_rg_tips.end())
 					{
 						_vrange = irg->second;
@@ -188,7 +191,7 @@ namespace auto_future
 						{
 							_vrange = irg_reg->second;
 						}
-					}
+					}*/
 					string float_format = "%.3f";
 					if (regex_search(mname, regex("_hac")))
 					{
@@ -197,7 +200,7 @@ namespace auto_future
 					cmd_value_block before_op_memb_value;
 					before_op_memb_value.reserve(mtpsz);
 					before_op_memb_value.resize(mtpsz);
-					memcpy(&before_op_memb_value[0], memb_address, mtpsz);
+                    memcpy_s(&before_op_memb_value[0], mtpsz, memb_address, mtpsz);
 
 					auto &imemb_tp_handl = _mcustom_type_property_handles_container.find(mtype);
 					bool be_base_type = mtype == "int" || mtype == "float" || mtype == "double" || mtype == "bool" || mtype == "af_vi2" || mtype == "af_vi3" || mtype == "af_vi4" || mtype == "af_vec2" || mtype == "af_vec3" || mtype == "af_vec4";
@@ -374,7 +377,7 @@ namespace auto_future
 									for (int ix = 0; ix < array_cnt; ++ix)
 									{
 										char str_index[50] = {0};
-										sprintf(str_index, "[%d]", ix);
+										sprintf_s(str_index,sizeof(str_index), "[%d]", ix);
 										string mname_width_index = mname + str_index;
 										void *memb_index_address = (char *)memb_address + ix * mtpsz;
 										f_draw_index_prop(mname_width_index, memb_index_address);
@@ -394,7 +397,8 @@ namespace auto_future
 						cmd_value_block after_op_memb_value;
 						after_op_memb_value.reserve(mtpsz);
 						after_op_memb_value.resize(mtpsz);
-						memcpy(&after_op_memb_value[0], memb_address, mtpsz);
+                        memcpy_s(&after_op_memb_value[0],mtpsz,
+							memb_address, mtpsz);
 
 						ImGuiContext &g = *GImGui;
 
@@ -434,7 +438,7 @@ namespace auto_future
 					}
 					//bind_btn_cp += "#";
 					char idstr[50] = {0};
-					sprintf(idstr, "%d_%d", pgidx, idx);
+					sprintf_s(idstr,sizeof(idstr) ,"%d_%d", pgidx, idx);
 					string btn_cap = aliase_btn_cp + idstr;
 					ImGui::SameLine();
 					/*if (ImGui::Button(btn_cap.c_str())&&ImGui::IsMouseDoubleClicked(0))
@@ -638,7 +642,8 @@ namespace auto_future
 					{
 						string out_bin;
 						convert_string_to_binary(vele.asString(), out_bin);
-						memcpy(membaddr, &out_bin[0], out_bin.size());
+                        memcpy_s(membaddr,out_bin.size(),
+							& out_bin[0],out_bin.size());
 					};
 				}
 				if (array_cnt > 1)
@@ -822,7 +827,8 @@ namespace auto_future
 					{
 						string out_bin;
 						convert_string_to_binary(vele.asString(), out_bin);
-						memcpy(membaddr, &out_bin[0], out_bin.size());
+                        memcpy_s(membaddr,out_bin.size() ,
+							& out_bin[0],out_bin.size());
 					};
 				}
 				if (array_cnt > 1)
@@ -919,7 +925,7 @@ namespace auto_future
 					{
 						char *str_memb = new char[array_cnt];
 						memset(str_memb, 0, array_cnt);
-						memcpy(str_memb, memb_address, array_cnt);
+						memcpy_s(str_memb, array_cnt, memb_address, array_cnt);
 						junit[mname] = str_memb;
 						delete str_memb;
 					}

@@ -382,7 +382,7 @@ namespace auto_future
 		base_ui_component* ppt = nullptr;
 		base_ui_component* pcur = pobj;
 		name_list.push_back(pcur->get_name());
-		while (ppt = pcur->get_parent())
+		while ((ppt = pcur->get_parent())&&ppt!=nullptr)
 		{
 			name_list.push_back(ppt->get_name());
 			pcur = ppt;
