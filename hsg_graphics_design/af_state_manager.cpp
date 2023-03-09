@@ -1,5 +1,5 @@
 #include "af_state_manager.h"
-
+#include "easing.h"
 mp_state_manager g_mstate_manager;
 /**
 void state_trans_player::play_state_trans(ps_state_manager pstate, int from, int

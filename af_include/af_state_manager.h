@@ -1,6 +1,5 @@
 #pragma once
 #include "af_bind.h"
-#include "easing.h"
 #include<chrono>
 using namespace chrono;
 using prop_value_block = string;
@@ -66,12 +65,12 @@ enum trans_play_state
 typedef	function<void(int from, int to)> trans_finish_handle;
 struct af_state_manager
 {
-	vprop_pos _prop_list;//ÊôÐÔÁÐ±í¡ª¡ª¸Ã×´Ì¬»ú°üº¬µÄËùÓÐÊôÐÔ
-	vvprop_block _prop_value_list;//ÊôÐÔÖµÁÐ±í¡ª¡ª
+	vprop_pos _prop_list;//ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	vvprop_block _prop_value_list;//ï¿½ï¿½ï¿½ï¿½Öµï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½
 	state_transition _any_to_any;
 	trans_finish_handle _trans_finish;
      sp_st_trans _pcur_tran { nullptr };
-	mp_trans _mtrans;//×´Ì¬ÇÐ»»
+	mp_trans _mtrans;//×´Ì¬ï¿½Ð»ï¿½
 	unsigned char _state_idx{ 0 };
 	moving_state _mstate{ en_state_pause };
      trans_play_state _play_state {en_play_stop};
