@@ -277,19 +277,15 @@ namespace auto_future
 		auto& fd_ele = *vfd_ele[fd_id];
 		char* pdest = fd_ele._address;
 		int count = fd_ele._count;
-		if (count==0)
+
+		if (count>1&&fd_ele._type=="char")
 		{
-			count = 1;
+			strcpy( pdest, (char*)pvalue );
 		}
-          
-          if (count>1&&fd_ele._type=="char")
-          {
-               strcpy( pdest, (char*)pvalue );
-          }
-          else
-          {
-               memcpy( pdest, pvalue, count * fd_ele._tpsz );
-          }
+		else
+		{
+			memcpy( pdest, pvalue, count * fd_ele._tpsz );
+		}
 #ifndef AFG_GAME
 		prop_ele_position cur_prp_ele_pos = { this, pg_id, fd_id};
 		calcu_bind_node(cur_prp_ele_pos);

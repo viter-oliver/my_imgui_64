@@ -40,18 +40,13 @@ void file_res_edit::draw_file_res_list()
 			auto& keyname = mf_ut.first;
 			auto& ttl = mf_ut.second;
 			ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_Leaf;
-			if (ttl->_sel)
+			if (_pfile ==ttl)
 			{
 				node_flags |= ImGuiTreeNodeFlags_Selected;
 			}
 			IconTreeNode(icon_str, keyname.c_str(), node_flags);
 			if (ImGui::IsItemClicked())
 			{
-				if (_pfile)
-				{
-					_pfile->_sel = false;
-				}
-				ttl->_sel = true;
 				_pfile = ttl;
 				_file_key_name = keyname;
 			}

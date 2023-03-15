@@ -531,6 +531,7 @@ void afb_load::load_afb(const char* afb_file)
 		p_obj->_ps_file = ifile->second;
 		g_primitive_list[key_name] = p_obj;
 	}
+	TIME_CHECK(primitive list res);
 	auto obj_models = obj_w.via.array.ptr[en_models_res];
 	auto obj_modles_sz = obj_models.via.array.size;
 	for (size_t ix = 0; ix < obj_modles_sz;++ix)
@@ -625,6 +626,7 @@ void afb_load::load_afb(const char* afb_file)
 			}
 		}
 	}
+	TIME_CHECK(mdeol list res);
 	auto obj_ui = obj_w.via.array.ptr[en_control_res];
 	init_ui_component_by_mgo(_pj, obj_ui);
 	TIME_CHECK(control list res)

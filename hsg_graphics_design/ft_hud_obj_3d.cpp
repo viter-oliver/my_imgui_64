@@ -8,8 +8,7 @@ GLfloat vertices[] = {
      -0.5f, 0.5f, 0.f,0.f, 0.f,
      0.5f, 0.5f,0.f, 1.f, 0.f,
 };
-const char* hud_sd_vs = R"glsl(
-#version 300 es
+const char* hud_sd_vs = R"glsl(#version 300 es
 precision mediump float;
 layout(location=0) in vec3 position;
 layout(location=1) in vec2 textCoord;
@@ -24,8 +23,7 @@ void main()
     TextCoord = textCoord;
 }
 )glsl";
-const char* hud_sd_fs = R"glsl(
-#version 300 es
+const char* hud_sd_fs = R"glsl(#version 300 es
 precision mediump float;
 in vec2 TextCoord;
 out vec4 o_clr;

@@ -1,4 +1,5 @@
 ﻿#include "state_manager_edit.h"
+#include "easing.h"
 #include "playlist_group_edit.h"
 #include "res_internal.h"
 #include "user_control_imgui.h"
