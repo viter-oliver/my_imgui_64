@@ -16,6 +16,7 @@ namespace auto_future
 
      void ft_essay::load_content( wstring& str_content )
      {
+          game_state = "";
           if( !_pfont_unit ||!str_content.size())
           {
                return;
@@ -78,6 +79,10 @@ namespace auto_future
           } else {
             delete pnew_paragraph;
           }
+          _cur_order.paragraphs_order.assign(_vchilds.size(), true);
+          _cur_order.paragraphs_restored = true;
+          
+          
      }
 
      void ft_essay::draw()
@@ -171,7 +176,8 @@ namespace auto_future
                     {
                          swap_ui( psel_ui, phit );
                          psel_ui = nullptr;
-                         if( orignal_order())
+                         calculate_order();
+                         if( _cur_order.is_orignal_order())
                          {
                               auto currentTime = steady_clock::now();
                               int delta = chrono::duration_cast<chrono::duration<int, std::milli>>( currentTime - _play_start ).count();
@@ -193,7 +199,22 @@ namespace auto_future
                               {
                                    game_state = "Fail!";
                               }
-                         }
+                         } else {
+                             game_state = "";
+                             if (_cur_order.paragraphs_restored) {
+                                 game_state += "main order of the essay is restored! ";
+                             }
+                             for(int ii=0;ii<_cur_order.paragraphs_order.size();ii++){
+                                 if (_cur_order.paragraphs_order[ii]) {
+                                     char numstr[20];
+                                     itoa(ii,numstr,10);
+                                     game_state += "paragraph";
+                                     game_state += numstr;
+                                     game_state += " is restored!";
+
+                                }
+                             }
+                         } 
                     }
                }
                
@@ -219,21 +240,27 @@ namespace auto_future
             ppara->shuffle();
           }
           random_shuffle( _vchilds.begin(), _vchilds.end() );
+          _cur_order.paragraphs_restored = false;
+          _cur_order.paragraphs_order.assign(_vchilds.size(), false);
      }
 
-     bool ft_essay::orignal_order()
+     void ft_essay::calculate_order()
      {
           int ix = 0;
+          int oid = 0;
           for (auto& itc:_vchilds)
           {
             ft_paragraph* pst = static_cast<ft_paragraph*>(itc);
-            if (!pst->orignal_order() || pst->load_idx != ix)
+            if (pst->orignal_order()) {
+                _cur_order.paragraphs_order[ix] = true;
+            }
+            if (pst->load_idx == ix)
             {
-                return false;
+                oid++;
             }
             ix++;
           }
-          return true;
+          _cur_order.paragraphs_restored = ix == oid;
      }
 
 }

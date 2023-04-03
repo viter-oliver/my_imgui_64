@@ -166,7 +166,7 @@ int main(int argc, char* argv[])
         ImGui_ImplGlfwGL3_NewFrame();
 		static bool show_set=true;
           ImGui::Begin( "Ebook game", &show_set, ImVec2( 1500, 1000 ), ImGuiWindowFlags_NoMove);
-          ImGui::BeginChild( "Setup", ImVec2( 400, 200 ), true, ImGuiWindowFlags_NoMove );
+          ImGui::BeginChild( "Setup", ImVec2( 1500, 200 ), true, ImGuiWindowFlags_NoMove );
           auto& ft_nm_list = g_pfont_face_manager->get_dic_fonts();
           static int _font_id = 0;
           ImGui::TextColored( ImVec4(1,0,0,1),"Game state:%s", sptr_essay->game_state.c_str() );

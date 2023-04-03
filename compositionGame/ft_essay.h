@@ -5,11 +5,27 @@
 using namespace chrono;
 namespace auto_future
 {
+     struct essay_order {
+        bool paragraphs_restored  { false };
+        std::vector<bool> paragraphs_order;
+        bool is_orignal_order() {
+            if (paragraphs_restored) {
+                for (auto porder : paragraphs_order) {
+                    if (!porder) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+     };
      class ft_essay :
           public ft_base
      {
           ps_font_unit _pfont_unit;
           steady_clock::time_point  _play_start;
+          essay_order _cur_order;
      public:
           float hmargin = { 20.f }, vmargin = { 30.f }, line_spacing = {10.f};
           int consume_seconds = 0;
@@ -24,6 +40,6 @@ namespace auto_future
           void load_content( wstring& str_content );
           void draw();
           void shuffle();
-          bool orignal_order();
+          void calculate_order();
      };
 }
