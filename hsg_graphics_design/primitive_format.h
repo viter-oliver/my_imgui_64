@@ -37,6 +37,7 @@ namespace auto_future {
           dub reserverd:9;
           u32_t size;
     };
+    constexpr auto fsz = sizeof primitive_file_head;
 	using pm_format=std::vector<ub>;
     void get_pm_format(dub index,pm_format& pmf );//pmf.size()>1
     dub get_pm_format_index(pm_format& pmf);

@@ -218,11 +218,13 @@ namespace auto_future
 	}
      void application::set_rotate_angle( float angle )
      {
-          _pscr_ds->set_rotate_angle( angle );
+          //_pscr_ds->set_rotate_angle( angle );
+		 ::set_rotate_angle(angle);
      }
      void application::set_rotate_axis_pos( float px, float py )
      {
-          _pscr_ds->set_rotate_axis_pos( px, py );
+          //_pscr_ds->set_rotate_axis_pos( px, py );
+		 ::set_rotate_axis_pos(px, py);
      }
 
 	void application::destroy()

@@ -529,6 +529,7 @@ int main(int argc, char *argv[])
                          string mesh_path = g_cureent_directory + mesh_fold;
                          string font_path = g_cureent_directory + font_fold;
                          string files_path = g_cureent_directory + files_fold;
+                         string vertices_path = g_cureent_directory + vertices_fold;
                          string image_path = g_cureent_directory + image_fold;
                          string shader_path = g_cureent_directory + shaders_fold;
                          string text_res_path = g_cureent_directory + text_res_fold;
@@ -536,6 +537,7 @@ int main(int argc, char *argv[])
                          createDirectory(mesh_path.c_str());
                          createDirectory(font_path.c_str());
                          createDirectory(files_path.c_str());
+                         createDirectory(vertices_path.c_str());
                          createDirectory(image_path.c_str());
                          createDirectory(shader_path.c_str());
                          createDirectory(text_res_path.c_str());

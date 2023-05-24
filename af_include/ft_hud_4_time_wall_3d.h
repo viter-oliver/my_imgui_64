@@ -27,24 +27,28 @@ namespace auto_future
           ~ft_hud_4_time_wall_3d();
           void link();
           void draw();
-          void set_transx( float transx )
+          ft_hud_4_time_wall_3d& set_transx( float transx )
           {
                _pt_tb._tanslation_x = transx;
+               return *this;
           }
-          void set_transy( float transy )
+          ft_hud_4_time_wall_3d& set_transy( float transy )
           {
                _pt_tb._tanslation_y = transy;
+               return *this;
           }
-          void set_transz( float transz )
+          ft_hud_4_time_wall_3d& set_transz( float transz )
           {
                _pt_tb._tanslation_z = transz;
+               return *this;
           }
-          void set_coeff( float cf0, float cf1, float cf2, float cf3 )
+          ft_hud_4_time_wall_3d& set_coeff( float cf0, float cf1, float cf2, float cf3 )
           {
                _pt_tb._coeff_hac[ 0 ] = cf0;
                _pt_tb._coeff_hac[ 1 ] = cf1;
                _pt_tb._coeff_hac[ 2 ] = cf2;
                _pt_tb._coeff_hac[ 3 ] = cf3;
+               return *this;
         }
      };
      REGISTER_CONTROL( ft_hud_4_time_wall_3d );

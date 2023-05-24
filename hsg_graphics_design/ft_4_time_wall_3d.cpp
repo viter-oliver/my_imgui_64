@@ -2,7 +2,7 @@
 #include "ft_light_scene.h"
 
 const char* sd_4_wall_vs = R"glsl(#version 300 es
-precision mediump float;
+precision highp float;
 layout(location=0) in vec3 position;
 layout(location=1) in vec2 textCoord;
 out vec2 TextCoord;
@@ -27,7 +27,7 @@ void main()
 }
 )glsl";
 const char* sd_4_wall_fs = R"glsl(#version 300 es
-precision mediump float;
+precision highp float;
 in vec2 TextCoord;
 out vec4 o_clr;
 uniform sampler2D text_at;

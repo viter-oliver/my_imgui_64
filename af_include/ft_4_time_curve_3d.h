@@ -29,17 +29,20 @@ namespace auto_future
           ~ft_4_time_curve_3d();
           void link();
           void draw();
-          void set_transx( float transx )
+          ft_4_time_curve_3d& set_transx( float transx )
           {
                _pt_tb._tanslation_x = transx;
+               return *this;
           }
-          void set_transy( float transy )
+          ft_4_time_curve_3d& set_transy( float transy )
           {
                _pt_tb._tanslation_y = transy;
+               return *this;
           }
-          void set_transz( float transz )
+          ft_4_time_curve_3d& set_transz( float transz )
           {
                _pt_tb._tanslation_z = transz;
+               return *this;
           }
           ft_4_time_curve_3d& set_near(float fValue) {
               _pt_tb._near = fValue;

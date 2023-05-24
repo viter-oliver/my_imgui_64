@@ -74,15 +74,32 @@ static int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0, g_Unif
 #include <math.h>
 static int g_AttribLocationcustomMtx = 0, g_AttribLocationcustomDelta = 0;
 float g_cs_a = 1.f, g_sn_a = 0.f, g_ox = -400, g_oy = -267;
+float custom_matrix[2][2] =
+{
+    { g_cs_a, -g_sn_a },
+    { g_sn_a, g_cs_a },
+};
+float vdelta[2] =
+{
+    g_ox * (1 - g_cs_a) - g_oy * g_sn_a,
+    g_ox * g_sn_a + g_oy * (1 - g_cs_a),
+};
 void set_rotate_angle(float angle)
 {
 	g_cs_a = cos(angle);
 	g_sn_a = sin(angle);
+    custom_matrix[0][0] = g_cs_a;
+    custom_matrix[0][1] = -g_sn_a;
+    custom_matrix[1][0] = g_sn_a;
+    custom_matrix[1][1] = g_cs_a;
+    vdelta[0] = g_ox * (1 - g_cs_a) - g_oy * g_sn_a;
+    vdelta[1] = g_ox * g_sn_a + g_oy * (1 - g_cs_a);
 }
 void set_rotate_axis_pos(float px, float py)
 {
-	g_ox = -px;
-	g_oy = -py;
+	g_ox = px;
+	g_oy = py;
+    
 }
 #endif
 static int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
@@ -158,17 +175,9 @@ void ImGui_ImplGlfwGL3_RenderDrawData(ImDrawData* draw_data)
     glUniformMatrix4fv(g_AttribLocationProjMtx, 1, GL_FALSE, &ortho_projection[0][0]);
 #ifdef BUILD_DLL
 
-	float custom_matrix[2][2] =
-	{
-		{ g_cs_a, g_sn_a },
-		{ -g_sn_a, g_cs_a },
-	};
+
 	glUniformMatrix2fv(g_AttribLocationcustomMtx, 1, GL_FALSE, &custom_matrix[0][0]);
-	float vdelta[2] =
-	{
-		g_ox*(1 - g_cs_a) - g_oy*g_sn_a,
-		g_ox*g_sn_a + g_oy*(1 - g_cs_a),
-	};
+	
 	glUniform2fv(g_AttribLocationcustomDelta, 1, vdelta);
 #endif // BUILD_DLL
 

@@ -182,6 +182,7 @@ namespace auto_future
                               auto currentTime = steady_clock::now();
                               int delta = chrono::duration_cast<chrono::duration<int, std::milli>>( currentTime - _play_start ).count();
                               //printf( "msg_host consume%d milli seconds\n", delta );
+                              _gaming = false;
                               consume_seconds = delta / 1000;
                               if (delta<10000)
                               {
@@ -191,7 +192,7 @@ namespace auto_future
                               {
                                    game_state = "You did a excellent job!";
                               }
-                              else if (delta<600000)
+                              else if (delta<1800000)
                               {
                                    game_state = "You did a good job!";
                               }
@@ -231,6 +232,7 @@ namespace auto_future
 
      void ft_essay::shuffle()
      {
+         _gaming = true;
           game_state = "";
           _play_start = steady_clock::now();
           consume_seconds = 0;

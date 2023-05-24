@@ -66,26 +66,26 @@ void model_edit::draw_model_item_property()
 	{
 		auto& mld = *_pmodel;
 		ImGui::Text("mesh count:%d", mld.size());
-          for( int ix = 0; ix < mld.size(); ix++ )
-          {
-               ImGui::Text( "Mesh%d:", ix );
-               for( const auto& idiff : mld[ ix ]._text_diffuse_list )
-               {
-                    ImGui::Text( "text diffuse:%s", idiff.c_str() );
-               }
-               for( const auto& ispec : mld[ ix ]._text_specular_list )
-               {
-                    ImGui::Text( "text specular:%s", ispec.c_str() );
-               }
-               for( const auto& ihg : mld[ ix ]._text_height_list )
-               {
-                    ImGui::Text( "text height:%s", ihg.c_str() );
-               }
-               for( const auto& iam : mld[ ix ]._text_ambient_list )
-               {
-                    ImGui::Text( "text ambient:%s", iam.c_str() );
-               }
-          }
+        for( int ix = 0; ix < mld.size(); ix++ )
+        {
+            ImGui::Text( "Mesh%d:", ix );
+            for( const auto& idiff : mld[ ix ]._text_diffuse_list )
+            {
+                ImGui::Text( "text diffuse:%s", idiff.c_str() );
+            }
+            for( const auto& ispec : mld[ ix ]._text_specular_list )
+            {
+                ImGui::Text( "text specular:%s", ispec.c_str() );
+            }
+            for( const auto& ihg : mld[ ix ]._text_height_list )
+            {
+                ImGui::Text( "text height:%s", ihg.c_str() );
+            }
+            for( const auto& iam : mld[ ix ]._text_ambient_list )
+            {
+                ImGui::Text( "text ambient:%s", iam.c_str() );
+            }
+        }
 	}
 }
 
@@ -244,9 +244,9 @@ void processMesh(aiMesh *mesh, const aiScene *scene, primitive_object& obj_pm, a
 	GLuint* phead_len = (GLuint*)phead;
 	*phead_len = float_cnt*sizeof(float);
 	phead += 4;
-	memcpy(phead, pvertexs, *phead_len);
+	memcpy_s(phead, *phead_len,pvertexs, *phead_len);
 	phead += *phead_len;
-	memcpy(phead, pface_idx, face_len*sizeof(GLuint));
+	memcpy_s(phead, face_len*sizeof(GLuint),pface_idx, face_len*sizeof(GLuint));
 	delete[] pvertexs;
 	delete[] pface_idx;
 	g_mfiles_list[mesh_unit._prm_id] = ps_file;

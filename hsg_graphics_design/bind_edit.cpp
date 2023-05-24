@@ -155,7 +155,7 @@ void bind_edit::bind_source_view()
 		del_btn += cc;
 		if (ImGui::Button(del_btn.c_str()))
 		{
-               if( !is_edit_new_obj())
+      if( !is_edit_new_obj())
 			{
 				auto& iprop_ref = g_bind_ref_dic.find(*itp);
 				if (iprop_ref!=g_bind_ref_dic.end())

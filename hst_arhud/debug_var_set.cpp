@@ -46,7 +46,8 @@ void init_var_set_fifo() {
         if (ConnectNamedPipe(hPipe, NULL) != NULL) {
           if (ReadFile(hPipe, buff_queue[_front_id], FF_BUFF_LEN, &rlen,
                        NULL) == false) {
-            printf("Read data from client fault\n");
+            unsigned int error = GetLastError();
+            printf("Read data from client fault error:%d\n",error);
             // break;
           } else {
             buff_queue[_front_id][rlen - 2] = '\0';

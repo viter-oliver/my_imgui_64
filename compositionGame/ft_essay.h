@@ -26,6 +26,7 @@ namespace auto_future
           ps_font_unit _pfont_unit;
           steady_clock::time_point  _play_start;
           essay_order _cur_order;
+          bool _gaming{ false };
      public:
           float hmargin = { 20.f }, vmargin = { 30.f }, line_spacing = {10.f};
           int consume_seconds = 0;
@@ -37,6 +38,7 @@ namespace auto_future
           {
                _pfont_unit = pfont;
           }
+          bool is_gaming() { return _gaming; }
           void load_content( wstring& str_content );
           void draw();
           void shuffle();
