@@ -123,7 +123,7 @@ void add_file_to_mfiles_list(string& file_path)
 	string str_file = file_path;
 	string strfile_name = str_file.substr(str_file.find_last_of('\\') + 1);
 	string str_file_path = str_file.substr(0, str_file.find_last_of('\\') + 1);
-	string af_file_path = g_cureent_directory+files_fold;
+	string af_file_path = g_cureent_directory + files_fold;
 	if (str_file_path != af_file_path)
 	{
 		string str_cmd = "copy ";

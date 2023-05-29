@@ -32,9 +32,9 @@ void init_var_set_fifo() {
 #ifdef WIN32
   thread th_fifo([&]() {
     HANDLE hPipe =
-        CreateNamedPipe(TEXT("\\\\.\\Pipe\\mypipe"), PIPE_ACCESS_INBOUND,
+        CreateNamedPipe(TEXT("\\\\.\\Pipe\\hst\\mypipe"), PIPE_ACCESS_INBOUND,
                         PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT,
-                        PIPE_UNLIMITED_INSTANCES, 0, 0, NMPWAIT_NOWAIT, NULL);
+                        PIPE_UNLIMITED_INSTANCES, 0, 0, NMPWAIT_USE_DEFAULT_WAIT, NULL);
 
     if (INVALID_HANDLE_VALUE == hPipe) {
       printf("Create Pipe Error(%d)\n", GetLastError());

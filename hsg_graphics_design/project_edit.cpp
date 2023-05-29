@@ -179,6 +179,7 @@ bool allow_add_item( string& parent_type_name, string& child_type_name )
         {"ft_trans","ft_1_texture_mesh"},
         {"ft_trans","ft_1_texture_node"},
         {"ft_trans","ft_rectangle_3d"},
+        {"ft_trans","ft_rotate_curve_3d"},
         {"ft_trans","ft_trans"},
         { "ft_color_node", "ft_trans" },
         { "ft_color_node", "ft_color_node" },
