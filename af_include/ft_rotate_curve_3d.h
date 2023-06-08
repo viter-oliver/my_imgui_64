@@ -14,6 +14,7 @@ namespace auto_future
             ( float, _ori_x,{5.f}),
             ( float, _ori_z,{10.f}),
             ( float, _ra,{0}),
+            ( float, _u_l, { 0.5f }),
             ( float, _width, { 1.f } ),
             ( float, _voffset, {0.f} ),
 		    ( float, _near, { -1.f }),

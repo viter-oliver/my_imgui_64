@@ -26,7 +26,7 @@ AFG_EXPORT bool trans_is_playing(string trans_name) {
   }
   return false;
 }
-AFG_EXPORT bool play_tran(string stm_name, int from, int to,
+AFG_EXPORT bool play_tran(string stm_name, int from, int to, int circle_cnt,
                           bool cover_from_value) {
   const auto &istm = g_mstate_manager.find(stm_name);
   if (istm == g_mstate_manager.end()) {
@@ -48,6 +48,7 @@ AFG_EXPORT bool play_tran(string stm_name, int from, int to,
   stm._play_state = en_play_tran;
   stm._cur_from = from;
   stm._cur_to = to;
+  stm._circle_cnt = circle_cnt;
   if (cover_from_value) {
     auto &pp_value_list = stm._prop_value_list;
     auto &cur_pp_value = pp_value_list[from];
@@ -67,7 +68,7 @@ AFG_EXPORT bool play_tran(string stm_name, int from, int to,
   }
   return true;
 }
-AFG_EXPORT bool play_tran_playlist(string stm_name, int playlist_id) {
+AFG_EXPORT bool play_tran_playlist(string stm_name, int playlist_id,int circle_cnt) {
   const auto &istm = g_mstate_manager.find(stm_name);
   if (istm == g_mstate_manager.end()) {
     printf("invalid state manager name:%s\n", stm_name.c_str());
@@ -88,6 +89,7 @@ AFG_EXPORT bool play_tran_playlist(string stm_name, int playlist_id) {
   stm._play_state = en_play_tran_playlist;
   stm._trans_start = steady_clock::now();
   stm._cur_play_trans_id = 0;
+  stm._circle_cnt = circle_cnt;
   return true;
 }
 
@@ -117,19 +119,21 @@ void keep_state_trans_on() {
       auto &play_clk = stm._trans_start;
       auto dur_mills = duration_cast<milliseconds>(cur_clk - play_clk);
       auto &cur_trans = *stm._pcur_tran;
-      auto delta_tm =
-          dur_mills.count() -
-          cur_trans
-              ._start_time; // note��ostart_time2��2?��?����??��?��???��??������o��??o��?a��?
+      auto delta_tm = dur_mills.count() - cur_trans._start_time; 
       if (delta_tm > 0) {
         double tm_pt_mill = (double)delta_tm / cur_trans._duration;
         auto &easing_fun = easingFun[cur_trans._easing_func];
         double value_scale = easing_fun(tm_pt_mill);
         if (delta_tm >= cur_trans._duration) {
-          stm._play_state = en_play_stop;
-          value_scale = 1.0;
-          if (stm._trans_finish) {
-            stm._trans_finish(stm._cur_from, stm._cur_to);
+          if (stm._circle_cnt == 0) {
+            stm._play_state = en_play_stop;
+            value_scale = 1.0;
+            if (stm._trans_finish) {
+               stm._trans_finish(stm._cur_from, stm._cur_to);
+            }
+          } else {
+              stm._circle_cnt--;
+              stm._trans_start = steady_clock::now();
           }
         }
         auto &prop_list = stm._prop_list;
@@ -239,12 +243,18 @@ void keep_state_trans_on() {
           value_scale = 1.0;
           auto last_id = playlist.size() - 1;
           if (cur_pid == last_id) {
-            stm._play_state = en_play_stop;
-            cur_pid = 0;
-            stm._state_idx = cur_trankey._to;
-            if (stm._trans_finish) {
-              stm._trans_finish(cur_trankey._from, cur_trankey._to);
-            }
+            if (stm._circle_cnt == 0) {
+                stm._play_state = en_play_stop;
+                cur_pid = 0;
+                stm._state_idx = cur_trankey._to;
+                if (stm._trans_finish) {
+                    stm._trans_finish(cur_trankey._from, cur_trankey._to);
+                }
+            } else {
+                stm._circle_cnt--;
+                stm._trans_start = steady_clock::now();
+                stm._cur_play_trans_id = 0;
+            }       
             // stm._playlist.clear();
           } else {
             cur_pid++;
@@ -381,6 +391,7 @@ AFG_EXPORT bool cancel_play_tran(string stm_name) {
   }
   auto &stm = *istm->second;
   stm._play_state = en_play_stop;
+  stm._circle_cnt = 0;
   return true;
 }
 

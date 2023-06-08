@@ -464,7 +464,7 @@ bool ui_assembler::load_afg_from_file(const char* file_path)
 				any_2_any._start_time = jany["start_time"].asInt();
 				any_2_any._easing_func = jany["easing_fun"].asInt();
 				any_2_any._duration = jany["duration"].asInt();
-				stm._mstate = (moving_state)jstm["mstate"].asInt();
+				stm._circle_cnt = jstm["circle_cnt"].asInt();
 				auto& mtrans = stm._mtrans;
 				Value& jmtrans = jstm["mtrans"];
 				int jsz = jmtrans.size();
@@ -967,8 +967,8 @@ bool ui_assembler::output_ui_component_to_file(const char* file_path)
                st_m_unit[ "mtrans" ] = jmstrans;
                auto& state_idx = stm_unit._state_idx;
                st_m_unit[ "state_idx" ] = state_idx;
-               auto& mstate = stm_unit._mstate;
-               st_m_unit[ "mstate" ] = mstate;
+               auto& circle_cnt = stm_unit._circle_cnt;
+               st_m_unit[ "circle_cnt" ] = circle_cnt;
                auto& playlist_list = stm_unit._playlist_list;
                Value jplaylist_list( arrayValue );
                for( auto& iplaylist : playlist_list )
@@ -1650,7 +1650,7 @@ bool ui_assembler::load_ui_component_from_file( base_ui_component& insert_node, 
                     any_2_any._start_time = jany[ "start_time" ].asInt();
                     any_2_any._easing_func = jany[ "easing_fun" ].asInt();
                     any_2_any._duration = jany[ "duration" ].asInt();
-                    stm._mstate = (moving_state)jstm[ "mstate" ].asInt();
+                    stm._circle_cnt = jstm[ "circle_cnt" ].asInt();
                     auto& mtrans = stm._mtrans;
                     Value& jmtrans = jstm[ "mtrans" ];
                     int jsz = jmtrans.size();

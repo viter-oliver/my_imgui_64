@@ -49,12 +49,7 @@ using vtrans_key = vector<trans_key>;
 using vvtrans_key = vector<vtrans_key>;
 using mp_trans = map<trans_key, sp_st_trans>;
 //using  vstrans= vector<state_transition>;
-enum moving_state
-{
-	en_state_pause,
-	en_state_moving,
-	en_state_out
-};
+
 enum trans_play_state
 {
      en_play_stop,
@@ -65,22 +60,22 @@ enum trans_play_state
 typedef	function<void(int from, int to)> trans_finish_handle;
 struct af_state_manager
 {
-	vprop_pos _prop_list;//�����б�������״̬����������������
-	vvprop_block _prop_value_list;//����ֵ�б�����
-	state_transition _any_to_any;
-	trans_finish_handle _trans_finish;
-     sp_st_trans _pcur_tran { nullptr };
-	mp_trans _mtrans;//״̬�л�
-	unsigned char _state_idx{ 0 };
-	moving_state _mstate{ en_state_pause };
-     trans_play_state _play_state {en_play_stop};
-     steady_clock::time_point _trans_start;
-	 int _cur_from{ 0 }, _cur_to{ 0 };
-	 int _cur_play_trans_id{ 0 }, _cur_playlist_id{0};
-	 vvtrans_key _playlist_list;
-#if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
-	bool _sel{ false };
-#endif
+    vprop_pos _prop_list;//�����б�������״̬����������������
+    vvprop_block _prop_value_list;//����ֵ�б�����
+    state_transition _any_to_any;
+    trans_finish_handle _trans_finish;
+    sp_st_trans _pcur_tran { nullptr };
+    mp_trans _mtrans;//״̬�л�
+    unsigned char _state_idx{ 0 };
+    int _circle_cnt{ 0 };
+    trans_play_state _play_state {en_play_stop};
+    steady_clock::time_point _trans_start;
+    int _cur_from{ 0 }, _cur_to{ 0 };
+    int _cur_play_trans_id{ 0 }, _cur_playlist_id{0};
+    vvtrans_key _playlist_list;
+    #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
+    bool _sel{ false };
+    #endif
 };
 using ps_state_manager = shared_ptr<af_state_manager>;
 using mp_state_manager = map<string, ps_state_manager>;
@@ -89,8 +84,8 @@ AFG_EXPORT bool trans_is_playing( string trans_name );
 AFG_EXPORT bool save_trans_value( string trans_name, int sid );
 AFG_EXPORT bool restore_trans_value( string trans_name, int sid );
 AFG_EXPORT bool reg_trans_handle(string trans_name, trans_finish_handle trans_handle);
-AFG_EXPORT bool play_tran(string stm_name, int from, int to,bool cover_from_value=true);
-AFG_EXPORT bool play_tran_playlist(string stm_name, int playlist_id);
+AFG_EXPORT bool play_tran(string stm_name, int from, int to, int circle_cnt = 1, bool cover_from_value = true);
+AFG_EXPORT bool play_tran_playlist(string stm_name, int playlist_id,int circle_cnt = 1);
 AFG_EXPORT void keep_state_trans_on();
 AFG_EXPORT bool save_property_to_trans_state( string trans_name,
                                               prop_ele_position& prp_pos,

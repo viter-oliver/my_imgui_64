@@ -16,24 +16,27 @@ uniform float ori_x;
 uniform float ori_z;
 uniform float ra;
 uniform float w;
+uniform float u_l;
 uniform float voffset;
 const float right_a=1.707963;//pi*0.5
 void main()
 {
     vec3 pos=position;
     float posx0=pos.x;
-    float z=pos.z;//index
+    float z_id=pos.z;//index
+    float z=z_id*u_l;
     if(ori_x>0.1){//right rotate
         float rd_in=ori_x;
         float rd_out=rd_in+w;
         float r_s=rd_in*ra;
         float da=ra/r_s;
-        if( z<=ori_z ) {
+        if( z<=ori_z||r_s<=u_l) {
             if(posx0<0.1){//left
               pos.x=-w;
             } else {
               pos.x=0.f;
             }
+            pos.z=z;
         } else if(z>ori_z&&z<=(ori_z+r_s)) {
             float tra=(z-ori_z)*da;
             if(posx0<0.1){//left
@@ -66,12 +69,13 @@ void main()
         float rd_out=rd_in+w;
         float r_s=rd_in*ra;
         float da=ra/r_s;
-        if( z<=ori_z ) {
+        if( z<=ori_z||r_s<=u_l ) {
             if(posx0<0.1){//left
               pos.x=0.f;
             } else {
               pos.x=w;
             }
+            pos.z=z;
         } else if(z>ori_z&&z<=(ori_z+r_s)) {
             float tra=(z-ori_z)*da;
             if(posx0<0.1){//left
@@ -190,7 +194,7 @@ namespace auto_future
                    vertices[ base_id + 1 ] = 0;//y->
                    vertices[ base_id + 2 ] = ix;//z->
                    vertices[ base_id + 3 ] = 0;
-                   vertices[ base_id + 4 ] = ix;
+                   vertices[ base_id + 4 ] = uv_unit * ix;
 
                    vertices[ base_id + 5 ] = 1;//x->
                    vertices[ base_id + 6 ] = 0;//y->
@@ -257,6 +261,7 @@ namespace auto_future
           _phud_sd->uniform("ori_x", &_pt_tb._ori_x);
           _phud_sd->uniform("ori_z", &_pt_tb._ori_z);
           _phud_sd->uniform("ra", &_pt_tb._ra);
+          _phud_sd->uniform("u_l", &_pt_tb._u_l);
           _phud_sd->uniform( "w", &_pt_tb._width );
           _phud_sd->uniform("voffset", &_pt_tb._voffset);
           _phud_sd->uniform("lane_color", (float*) & _pt_tb._lane_clr);

@@ -27,8 +27,10 @@ afg_engine::afg_engine(int argc, char **argv)
 
 	_wposx = 0.f;
 	_wposy = 180.f;
+   set_rotate_axis_pos(1920/2, 1080/2 );
+   set_rotate_angle(3.1415);
 }
-void afg_engine::resLoaded()
+void afg_engine::resLoaded() 
 {
     printf("resloaded");
     fifo_debuger::init_var_set_fifo();
@@ -136,7 +138,7 @@ void afg_engine::resLoaded()
                 
                 u8* pcmd_end=pcmd+rm_len;
                 while(pcmd_end-pcmd>=valid_cmd_len){
-                     if(is_valid(pcmd)){
+                    if(is_valid(pcmd)){
                         g_msg_host.pick_valid_data(pcmd,valid_cmd_len);
                     } else {
                         //print_buff(pcmd,valid_cmd_len);
