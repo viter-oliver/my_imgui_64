@@ -10,15 +10,21 @@ namespace auto_future
           public ft_base
      {
           DEF_STRUCT_WITH_INIT( pty_page, _pt_tb,
-                                ( char, _attached_image[ FILE_NAME_LEN ] ),
-                                ( float, _coeff_hac[4] ),
-                                ( bool, _left_border, {true} ),
-                                ( float, _width, { 100.f } ),
-								( float, _near, { -1.f }),
-								( float, _far, { -1.f }),
-                                ( float, _tanslation_x, { 0.f } ),
-                                ( float, _tanslation_y, { 0.f } ),
-                                ( float, _tanslation_z, { 0.f } ) )
+                ( char, _attached_image[ FILE_NAME_LEN ] ),
+                ( float, _coeff_hac[4] ),
+                ( bool, _left_border, {true} ),
+                ( float, _width, { 100.f } ),
+                ( float, _near, { -1.f }),
+                ( float, _far, { -1.f }),
+                ( float, _tanslation_x, { 0.f } ),
+                ( float, _tanslation_y, { 0.f } ),
+                ( float, _tanslation_z, { 0.f } ),
+                (float, _scale_x, { 1.f }),
+                (float, _scale_y, { 1.f }),
+                (float, _scale_z, { 1.f }),
+                (float, _rotation_x, { 0.f }),
+                (float, _rotation_y, { 0.f }),
+                (float, _rotation_z, { 0.f }))
           static ps_shader _phud_sd;
           static ps_primrive_object _ps_prm;
           ps_af_texture _pat_image;
@@ -27,18 +33,52 @@ namespace auto_future
           ~ft_hud_4_time_curve_3d();
           void link();
           void draw();
-          void set_transx( float transx )
+          ft_hud_4_time_curve_3d& set_transx( float transx )
           {
                _pt_tb._tanslation_x = transx;
+               return *this;
           }
-          void set_transy( float transy )
+          ft_hud_4_time_curve_3d& set_transy( float transy )
           {
                _pt_tb._tanslation_y = transy;
+               return *this;
           }
-          void set_transz( float transz )
+          ft_hud_4_time_curve_3d& set_transz( float transz )
           {
                _pt_tb._tanslation_z = transz;
+               return *this;
           }
+          ft_hud_4_time_curve_3d& set_scale_x(float s_x)
+          {
+              _pt_tb._scale_x = s_x;
+              return *this;
+          }
+          ft_hud_4_time_curve_3d& set_scale_y(float s_y)
+          {
+              _pt_tb._scale_y = s_y;
+              return *this;
+          }
+          ft_hud_4_time_curve_3d& set_scale_z(float s_z)
+          {
+              _pt_tb._scale_z = s_z;
+              return *this;
+          }
+          ft_hud_4_time_curve_3d& set_rotate_x(float r_x)
+          {
+              _pt_tb._rotation_x = r_x;
+              return *this;
+          }
+          ft_hud_4_time_curve_3d& set_rotate_y(float r_y)
+          {
+              _pt_tb._rotation_y = r_y;
+              return *this;
+          }
+          ft_hud_4_time_curve_3d& set_rotate_z(float r_z)
+          {
+              _pt_tb._rotation_z = r_z;
+              return *this;
+          }
+
           void set_coeff( float cf0, float cf1, float cf2, float cf3 )
           {
                _pt_tb._coeff_hac[ 0 ] = cf0;

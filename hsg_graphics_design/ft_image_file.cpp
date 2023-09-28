@@ -107,7 +107,7 @@ namespace auto_future
 		float offsetx = abpos.x - base_pos().x;
 		float offsety = abpos.y - base_pos().y;
 		ImVec2 axisBasePos = { offsetx + _img_pt._aposx + winpos.x, offsety + _img_pt._aposy + winpos.y };
-		if (_img_pt._angle_srd != 0.f)
+		if (_img_pt._angle_srd > 0.00001f || _img_pt._angle_srd < -0.00001f)
 		{
 			pos0 = rotate_point_by_zaxis(pos0, _img_pt._angle_srd, axisBasePos);
 			pos1 = rotate_point_by_zaxis(pos1, _img_pt._angle_srd, axisBasePos);

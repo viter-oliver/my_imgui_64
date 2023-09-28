@@ -107,9 +107,7 @@ namespace auto_future
           glm::mat4 view = glm::lookAt( cam_pos, cam_dir, cam_up );
           _phud_sd->use();
           _phud_sd->uniform( "view", glm::value_ptr( view ) );
-          float w, h;
-          p_prj->get_size( w, h );
-          float aspect = w / h;
+          float aspect =p_prj->get_aspect();
           glm::mat4 proj = glm::perspective( glm::radians( p_prj->get_fovy() ), aspect, p_prj->get_near(), p_prj->get_far() );
           _phud_sd->uniform( "projection", glm::value_ptr( proj ) );
           glm::mat4 trans;

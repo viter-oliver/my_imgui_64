@@ -8,7 +8,6 @@
 #define Vehicle_frame_a1 0x76d
 #define Vehicle_frame_a2 0x76e
 #define Vehicle_frame_c 0x76f
-
 #define Vehicle_frame_b0 0x770
 #define Vehicle_frame_b7 0x777
 #define Pedestrian_frame_a 0x77a
@@ -16,7 +15,6 @@
 #define Pedestrian_frame_bc 0x77c
 #define Pedestrian_frame_bd 0x77d
 #define Pedestrian_frame_c 0x77f
-
 #define lane_frame_1_l 0x5f0
 #define lane_frame_1_h 0x5f1
 #define lane_frame_2_l 0x5f2
@@ -26,12 +24,33 @@
 #define lane_frame_4_l 0x5f6
 #define lane_frame_4_h 0x5f7
 #define lane_frame_c 0x5f8
-
 #define TSR_frame_A 0x761
 #define TSR_frame_B1 0x762
 #define TSR_frame_B2 0x763
 #define TSR_frame_B3 0x764
 #define TSR_frame_C 0x765
+#define VechicleSpeedDisplay 0x26D
+#define BCM_LightChimeReq 0x1F0
+#define VCU_ModelControl 0x165
+#define STEERING_ANGLE 0x0e0
+#define LENS_HEIGHT 0x123
 
-#define num_in_range(x,min,max) (unsigned)(x-min)<=(max-min)
-#endif //MY_APPLICATION_ADAS_CAN_DEF_H
+#define num_in_range(x, min, max) (unsigned)(x - min) <= (max - min)
+namespace adas_value{
+enum vehicle_type{no_vehicle,car,minibus,truck,special_car};
+enum pedestrian_type { Pedestrian, Bicycle };
+enum lane_type {
+  Undecided,
+  Solid,
+  RoadEdge,
+  Dashed,
+  DoubleLane,
+  BottDots,
+  Barrier,
+  Invalid
+};
+enum lane_quality { Unknown, Low, Medium, High };
+enum lane_crossing { no_crossing, crossing };
+enum lane_mark_color { white, yellow };
+}
+#endif // MY_APPLICATION_ADAS_CAN_DEF_H

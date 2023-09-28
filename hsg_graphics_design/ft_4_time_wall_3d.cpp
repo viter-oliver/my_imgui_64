@@ -17,13 +17,13 @@ void main()
     vec3 pos=position;
     float posy0=pos.y;
     float z=pos.z;
-    pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0]+of;
+    pos.x=c[3]*z*z*z+c[2]*z*z+c[1]*z+c[0];
     if(posy0>0.1){
        pos.y=h;
     }
     
     gl_Position = projection * view * model * vec4(pos, 1.0);
-    TextCoord = textCoord;
+    TextCoord = vec2(textCoord.x,textCoord.y + of);
 }
 )glsl";
 const char* sd_4_wall_fs = R"glsl(#version 300 es
@@ -141,9 +141,7 @@ namespace auto_future
           glm::mat4 view = glm::lookAt( cam_pos, cam_dir, cam_up );
           _phud_sd->use();
           _phud_sd->uniform( "view", glm::value_ptr( view ) );
-          float w, h;
-          p_prj->get_size( w, h );
-          float aspect = w / h;
+          float aspect =p_prj->get_aspect();
 		  float near_value = _pt_tb._near > 0.f ? _pt_tb._near : p_prj->get_near();
 		  float far_value = _pt_tb._far > 0.f ? _pt_tb._far : p_prj->get_far();
 
@@ -158,7 +156,6 @@ namespace auto_future
           _phud_sd->uniform( "c[0]", _pt_tb._coeff_hac );
           _phud_sd->uniform( "h", &_pt_tb._height );
 		  _phud_sd->uniform("of", &_pt_tb._offset );
-
           glActiveTexture( GL_TEXTURE0 );
           glBindTexture( GL_TEXTURE_2D, _pat_image->_txt_id() );
           _phud_sd->uniform( "text_at", 0 );

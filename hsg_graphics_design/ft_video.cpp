@@ -103,27 +103,27 @@ namespace auto_future
 		ImVec2 pos2 = { pos1.x, pos1.y + sizeh };
 		ImVec2 pos3 = { pos1.x + sizew, pos1.y + sizeh };
 		ImVec2 pos4 = { pos1.x + sizew, pos1.y };
-          float offsetx = abpos.x - base_pos().x;
-          float offsety = abpos.y - base_pos().y;
-          ImVec2 axisBasePos = { offsetx + _img_pt._aposx + winpos.x, offsety + _img_pt._aposy + winpos.y };
+        float offsetx = abpos.x - base_pos().x;
+        float offsety = abpos.y - base_pos().y;
+        ImVec2 axisBasePos = { offsetx + _img_pt._aposx + winpos.x, offsety + _img_pt._aposy + winpos.y };
 
-          if( _linked )
-          {
-               ImVec2 uv0(0.f,0.f);
-		     ImVec2 uv1(0.f, 1.f); 
-		     ImVec2 uv2(1.f, 1.f); 
-		     ImVec2 uv3(1.f, 0.f);
+        if( _linked )
+        {
+            ImVec2 uv0(0.f,0.f);
+		    ImVec2 uv1(0.f, 1.f); 
+		    ImVec2 uv2(1.f, 1.f); 
+		    ImVec2 uv3(1.f, 0.f);
 
-		     if (_img_pt._angle_nml != 0.f)
-		     {
-			     pos1 = rotate_point_by_zaxis(pos1, _img_pt._angle_nml, axisBasePos);
-			     pos2 = rotate_point_by_zaxis(pos2, _img_pt._angle_nml, axisBasePos);
-			     pos3 = rotate_point_by_zaxis(pos3, _img_pt._angle_nml, axisBasePos);
-			     pos4 = rotate_point_by_zaxis(pos4, _img_pt._angle_nml, axisBasePos);
-		     }
-               ImVec4 tin_clr( _img_pt._tin_clr.x, _img_pt._tin_clr.y, _img_pt._tin_clr.z, _img_pt._alpha_nml );
-		     ImGui::ImageQuad((ImTextureID)_txt_id, pos1, pos2, pos3, pos4, uv0, uv1, uv2, uv3,tin_clr);
-          }
+		    if (_img_pt._angle_nml > 0.00001f || _img_pt._angle_nml < -0.00001f)
+		    {
+			    pos1 = rotate_point_by_zaxis(pos1, _img_pt._angle_nml, axisBasePos);
+			    pos2 = rotate_point_by_zaxis(pos2, _img_pt._angle_nml, axisBasePos);
+			    pos3 = rotate_point_by_zaxis(pos3, _img_pt._angle_nml, axisBasePos);
+			    pos4 = rotate_point_by_zaxis(pos4, _img_pt._angle_nml, axisBasePos);
+		    }
+            ImVec4 tin_clr( _img_pt._tin_clr.x, _img_pt._tin_clr.y, _img_pt._tin_clr.z, _img_pt._alpha_nml );
+		    ImGui::ImageQuad((ImTextureID)_txt_id, pos1, pos2, pos3, pos4, uv0, uv1, uv2, uv3,tin_clr);
+        }
 		
 
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
@@ -146,7 +146,6 @@ namespace auto_future
 			ImVec2 posaa = axisBasePos - editunit;
 			ImVec2 posab = axisBasePos + editunit;
 			ImGui::RenderFrame(posaa, posab, col);
-
 		}
 #endif
 

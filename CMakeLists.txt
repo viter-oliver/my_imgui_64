@@ -105,7 +105,12 @@ add_executable(HSG ${lua_src} ${lua_h} ${hsg_src} ${hsg_h}
  add_subdirectory(create_primitive_format_table)
  add_subdirectory(change_lane_prm)
  add_subdirectory(font23D-master)
+ add_subdirectory(blf_resolve)
  add_subdirectory(hst_arhud)
+ set(opencv_head_dir D:\\opencv\\opencv\\build\\include)
+ set(opencv_lib_dir D:\\opencv\\opencv\\build\\x64\\vc16\\lib)
+ add_subdirectory(hud_lai)
+ add_subdirectory(lane_fitting_analyser)
  add_subdirectory(InstallAFGD)
 
 

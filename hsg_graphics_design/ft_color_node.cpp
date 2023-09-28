@@ -129,9 +129,7 @@ namespace auto_future
 		 glm::mat4 view = glm::lookAt(cam_pos, cam_dir, cam_up);
 		 _pcolor_node_sd->uniform("view", glm::value_ptr(view));
 		 _pcolor_node_sd->uniform("viewPos", glm::value_ptr(cam_pos));
-		 float w, h;
-		 pscene->get_size(w, h);
-		 float aspect = w / h;
+		 float aspect =pscene->get_aspect();
 		 glm::mat4 proj = glm::perspective(glm::radians(pscene->get_fovy()), aspect, pscene->get_near(), pscene->get_far());
 		 _pcolor_node_sd->uniform("projection", glm::value_ptr(proj));
 		 

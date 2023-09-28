@@ -96,6 +96,12 @@ namespace auto_future
                          }
                     }
                }
+               static float c[4] = { 0,0,0,0 }, dis = 0,xoff=0;
+               ImGui::SliderFloat4("cave", c,0,10,"%.6f");
+               ImGui::InputFloat("dis:", &dis);
+               xoff = c[0] + c[1] * dis + c[2] * dis * dis + c[3] * dis * dis * dis;
+               ImGui::Text("xoffset=%f", xoff);
+
           } );
 #endif
      }
@@ -169,12 +175,16 @@ namespace auto_future
 
           glm::mat4 proj = glm::perspective( glm::radians( p_prj->get_fovy() ), aspect, near_value, far_value );
           _phud_sd->uniform( "projection", glm::value_ptr( proj ) );
-          glm::mat4 trans;
-          trans = glm::translate(
-               trans,
-               glm::vec3( _pt_tb._tanslation_x, _pt_tb._tanslation_y, _pt_tb._tanslation_z )
-               );
-          _phud_sd->uniform( "model", glm::value_ptr( trans ) );
+          glm::mat4 model;
+          glm::vec3 gscale(_pt_tb._scale_x, _pt_tb._scale_y, _pt_tb._scale_z);
+          model = glm::scale(model, gscale);
+          model = glm::rotate(model, glm::radians(_pt_tb._rotation_x), glm::vec3(1.0f, 0.0f, 0.0f));
+          model = glm::rotate(model, glm::radians(_pt_tb._rotation_y), glm::vec3(0.0f, 1.0f, 0.0f));
+          model = glm::rotate(model, glm::radians(_pt_tb._rotation_z), glm::vec3(0.0f, 0.0f, 1.0f));
+          glm::vec3 gtranslation(_pt_tb._tanslation_x, _pt_tb._tanslation_y, _pt_tb._tanslation_z);
+          model = glm::translate(
+              model,gtranslation);
+          _phud_sd->uniform( "model", glm::value_ptr(model) );
           _phud_sd->uniform( "c[0]", _pt_tb._coeff_hac );
           int ileft_border = _pt_tb._left_border;
           _phud_sd->uniform( "left_boder", &ileft_border );

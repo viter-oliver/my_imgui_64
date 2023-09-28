@@ -19,6 +19,12 @@ namespace auto_future
                                 ( float, _tanslation_x, { 0.f } ),
                                 ( float, _tanslation_y, { 0.f } ),
                                 ( float, _tanslation_z, { 0.f } ),
+                                (float, _scale_x, { 1.f }),
+                                (float, _scale_y, { 1.f }),
+                                (float, _scale_z, { 1.f }),
+                                (float, _rotation_x, { 0.f }),
+                                (float, _rotation_y, { 0.f }),
+                                (float, _rotation_z, { 0.f }),
                                 (float,_voffset,{0.f}),
                                 (af_vec3,_lane_clr))
           static ps_shader _phud_sd;
@@ -43,6 +49,36 @@ namespace auto_future
           {
                _pt_tb._tanslation_z = transz;
                return *this;
+          }
+          ft_4_time_curve_3d& set_scale_x(float s_x)
+          {
+              _pt_tb._scale_x = s_x;
+              return *this;
+          }
+          ft_4_time_curve_3d& set_scale_y(float s_y)
+          {
+              _pt_tb._scale_y = s_y;
+              return *this;
+          }
+          ft_4_time_curve_3d& set_scale_z(float s_z)
+          {
+              _pt_tb._scale_z = s_z;
+              return *this;
+          }
+          ft_4_time_curve_3d& set_rotate_x(float r_x)
+          {
+              _pt_tb._rotation_x = r_x;
+              return *this;
+          }
+          ft_4_time_curve_3d& set_rotate_y(float r_y)
+          {
+              _pt_tb._rotation_y = r_y;
+              return *this;
+          }
+          ft_4_time_curve_3d& set_rotate_z(float r_z)
+          {
+              _pt_tb._rotation_z = r_z;
+              return *this;
           }
           ft_4_time_curve_3d& set_near(float fValue) {
               _pt_tb._near = fValue;

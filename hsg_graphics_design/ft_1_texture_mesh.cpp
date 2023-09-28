@@ -128,12 +128,10 @@ namespace auto_future
 		 glm::mat4 view = glm::lookAt(cam_pos, cam_dir, cam_up);
 		 _ptxt_node_sd->uniform("view", glm::value_ptr(view));
 		 _ptxt_node_sd->uniform("viewPos", glm::value_ptr(cam_pos));
-		 float w, h;
-		 pscene->get_size(w, h);
-		 float aspect = w / h;
-         float near_value = _pt._near > 0.f ? _pt._near : pscene->get_near();
-         float far_value = _pt._far > 0.f ? _pt._far : pscene->get_far();
-         glm::mat4 proj = glm::perspective(glm::radians(pscene->get_fovy()), aspect,near_value, far_value);
+		  float aspect =pscene->get_aspect();
+			float near_value = _pt._near > 0.f ? _pt._near : pscene->get_near();
+			float far_value = _pt._far > 0.f ? _pt._far : pscene->get_far();
+			glm::mat4 proj = glm::perspective(glm::radians(pscene->get_fovy()), aspect,near_value, far_value);
 		 _ptxt_node_sd->uniform("projection", glm::value_ptr(proj));
 		// auto& light_position = pscene->get_light_position();
 		// _ptxt_node_sd->uniform("light_position", (float*)&light_position);

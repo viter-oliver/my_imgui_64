@@ -192,7 +192,20 @@ AFG_EXPORT ImVec2 rotate_point_by_zaxis( ImVec2& tar, float angle, ImVec2& baseP
 {
 	ImVec2 des;
 	des.x = (tar.x - basePoint.x)*cos(angle) + (tar.y - basePoint.y)*sin(angle) + basePoint.x;
+	des.x = tar.x * cos(angle) - basePoint.x * cos(angle) + tar.y * sin(angle) - basePoint.y * sin(angle) + basePoint.x;
+	des.x= tar.x * cos(angle) + tar.y * sin(angle) - basePoint.x * cos(angle) - basePoint.y * sin(angle) + basePoint.x;
+	des.x= tar.x * cos(angle) + tar.y * sin(angle) + basePoint.x - basePoint.x * cos(angle) - basePoint.y * sin(angle);
+	des.x= tar.x * cos(angle) + tar.y * sin(angle) + basePoint.x *(1 -  cos(angle)) - basePoint.y * sin(angle);
+
 	des.y = -(tar.x - basePoint.x)*sin(angle) + (tar.y - basePoint.y)*cos(angle) + basePoint.y;
+	des.y = -tar.x * sin(angle)+basePoint.x * sin(angle)+tar.y * cos(angle)-basePoint.y * cos(angle)+basePoint.y;
+	des.y = -tar.x * sin(angle)+tar.y * cos(angle)+basePoint.x * sin(angle)-basePoint.y * cos(angle)+basePoint.y;
+    des.y = -tar.x * sin(angle)+tar.y * cos(angle)+basePoint.x * sin(angle)+basePoint.y-basePoint.y * cos(angle);
+    des.y = -tar.x * sin(angle)+tar.y * cos(angle)+basePoint.x * sin(angle)+basePoint.y*(1 -  cos(angle));
+
+	des.x = tar.x * cos(angle) + tar.y * sin(angle) + basePoint.x * (1 - cos(angle)) - basePoint.y * sin(angle);
+    des.y = -tar.x * sin(angle)+tar.y * cos(angle)+  basePoint.x * sin(angle)+basePoint.y*(1 -  cos(angle));
+
 	return des;
 }
 bool prepareFBO1(GLuint& colorTextId, GLuint& depthStencilTextId, GLuint& fboId, GLuint frame_width, GLuint frame_height)

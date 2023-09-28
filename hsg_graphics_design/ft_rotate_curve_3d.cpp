@@ -11,14 +11,13 @@ out vec2 TextCoord;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-
 uniform float ori_x;
 uniform float ori_z;
 uniform float ra;
 uniform float w;
 uniform float u_l;
 uniform float voffset;
-const float right_a=1.707963;//pi*0.5
+const float half_pi=1.5707963;//pi*0.5
 void main()
 {
     vec3 pos=position;
@@ -48,7 +47,7 @@ void main()
             }
         } else {
             float z_span=z-r_s-ori_z;
-            float ta=right_a-ra;
+            float ta=half_pi-ra;
             float dx=z_span*cos(ta);
             float dz=z_span*sin(ta);
             if(posx0<0.1){//left
@@ -87,7 +86,7 @@ void main()
             }
         } else {//TODO:
             float z_span=z-r_s-ori_z;
-            float ta=right_a-ra;
+            float ta=half_pi-ra;
             float dx=-z_span*cos(ta);
             float dz=z_span*sin(ta);
             if(posx0<0.1){//left

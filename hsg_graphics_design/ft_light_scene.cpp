@@ -5,16 +5,11 @@ namespace auto_future
 {
      ft_light_scene::ft_light_scene()
      {
-          _in_p._sizew = 1500;
-          _in_p._sizeh = 1500;
-          _pj_pt._view_pos = { 0.f, 206.f, -600.f };
-          _pj_pt._center_of_prj = { 0.f, 90.f, 0.f };
-		  
-          _pj_pt._up = { 0, 1.f, 0 };
-          _pj_pt._fovy =20;
-          _pj_pt._near =0.020;
-          _pj_pt._far = 100.f;
-          _pj_pt._test_depth = true;
+      _in_p._sizew = 1500;
+      _in_p._sizeh = 1500;
+      _pj_pt._view_pos = { 0.f, 206.f, -600.f };
+      _pj_pt._center_of_prj = { 0.f, 90.f, 0.f };
+      _pj_pt._up = { 0, 1.f, 0 };
 		  _pj_pt._bk_clr = { 0.2f, 0.2f, 0.2f, 1.f };
           _pj_pt._light_position = { 0.f,2.46f,-0.97f };
 		  _pj_pt._light_direction = { 0.f, -0.80f, -0.60 };

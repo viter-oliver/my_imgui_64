@@ -32,6 +32,20 @@ public:
   DEF_TRANS_SET(rotation,x)
   DEF_TRANS_SET(rotation,y)
   DEF_TRANS_SET(rotation,z)
+#define DEF_TRANS_GET(item,memb)\
+  auto get_##item##_##memb (){\
+     return _pt._trans_##item##_##memb;\
+  }
+  DEF_TRANS_GET(translation, x)
+  DEF_TRANS_GET(translation, y)
+  DEF_TRANS_GET(translation, z)
+  DEF_TRANS_GET(scale, x)
+  DEF_TRANS_GET(scale, y)
+  DEF_TRANS_GET(scale, z)
+  DEF_TRANS_GET(rotation, x)
+  DEF_TRANS_GET(rotation, y)
+  DEF_TRANS_GET(rotation, z)
+  
 }; // namespace auto_future
 REGISTER_CONTROL(ft_trans)
 }

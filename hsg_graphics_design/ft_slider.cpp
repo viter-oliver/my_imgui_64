@@ -136,7 +136,7 @@ namespace auto_future
 		float offsetx = abpos.x - base_pos().x;
 		float offsety = abpos.y - base_pos().y;
 		ImVec2 axisBasePos = { offsetx + _slider_pt._bg_aposx + winpos.x, offsety + _slider_pt._bg_aposy + winpos.y };
-		if (_slider_pt._bg_angle_nml != 0.f)
+		if (_slider_pt._bg_angle_nml > 0.00001f || _slider_pt._bg_angle_nml < -0.00001f)
 		{
 			pos1 = rotate_point_by_zaxis(pos1, _slider_pt._bg_angle_nml, axisBasePos);
 			pos2 = rotate_point_by_zaxis(pos2, _slider_pt._bg_angle_nml, axisBasePos);

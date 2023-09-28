@@ -33,6 +33,7 @@ enum easing_functions
 	EaseInBounce,
 	EaseOutBounce,
 	EaseInOutBounce,
+	EaseStep,
 	EaseFuncsCount
 };
 

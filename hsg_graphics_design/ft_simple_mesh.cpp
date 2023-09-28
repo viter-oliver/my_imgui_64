@@ -126,9 +126,7 @@ namespace auto_future
 		 glm::vec3 cam_up(pup->x, pup->y, pup->z);
 		 glm::mat4 view = glm::lookAt(cam_pos, cam_dir, cam_up);
 		 _ptxt_node_sd->uniform("view", glm::value_ptr(view));
-		 float w, h;
-		 pscene->get_size(w, h);
-		 float aspect = w / h;
+		 float aspect = pscene->get_aspect();
 		 glm::mat4 proj = glm::perspective(glm::radians(pscene->get_fovy()), aspect, pscene->get_near(), pscene->get_far());
 		 _ptxt_node_sd->uniform("projection", glm::value_ptr(proj));
 		// auto& light_position = pscene->get_light_position();

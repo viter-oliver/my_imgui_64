@@ -22,7 +22,7 @@ mp_var_set _mp_var_set;
 const char *fifo_path = "/media/fifo_hst";
 atomic<unsigned int> _rear_id{0}, _front_id{0};
 const int FF_BUFF_LEN = 0x100;
-const int queque_len = 50;
+const int queque_len = 0x100;
 char buff_queue[queque_len][FF_BUFF_LEN];
 bool recieve_cmd = false;
 int fd_fifo = 0;
@@ -39,7 +39,7 @@ void init_var_set_fifo() {
     if (INVALID_HANDLE_VALUE == hPipe) {
       printf("Create Pipe Error(%d)\n", GetLastError());
     } else {
-      printf("Waiting For Client Connection...\n");
+      printf("Waiting For t Connection...\n");
 
       DWORD rlen = 0;
       while (true) {

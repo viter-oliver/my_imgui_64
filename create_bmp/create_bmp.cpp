@@ -1,6 +1,7 @@
 // create_bmp.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+#include <fstream>
 #include <iostream>
 #include "BMPWriter.h"
 #include <random>
@@ -35,6 +36,7 @@ int main(int argc,char** argv)
 #else
     using namespace BMPWriter;
     using namespace raw_image;
+    using namespace std;
     img_raw BMPImage;
 
     int w = 1280;
@@ -60,7 +62,15 @@ int main(int argc,char** argv)
         ppu.g = 100;
         
     }
+
     write_bmp2("test3.bmp", BMPImage);
+    ofstream ofs;
+    ofs.open("1280_600.raw");
+    ofs.write((const char*)&BMPImage[0][0], h * w * 3);
+    for (int i = 0; i < h; i++) {
+        ofs.write((const char*)&BMPImage[i][0], w * 3);
+    }
+    ofs.close();
 #endif
     return 0;
 }

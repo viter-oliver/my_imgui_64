@@ -2,8 +2,10 @@
 #include "ft_light_scene.h"
 #include "ft_trans.h"
 static GLfloat vertices[] = {
-    -0.5f, -0.5f, 0.f, 0.f, 1.f, 0.5f, -0.5f, 0.f, 1.f, 1.f,
-    -0.5f, 0.5f,  0.f, 0.f, 0.f, 0.5f, 0.5f,  0.f, 1.f, 0.f,
+    -0.5f, -0.5f, 0.f, 0.f, 1.f, 
+    0.5f, -0.5f, 0.f, 1.f, 1.f,
+    -0.5f, 0.5f,  0.f, 0.f, 0.f, 
+    0.5f, 0.5f,  0.f, 1.f, 0.f,
 };
 const char *rect_vs = R"glsl(#version 300 es
 precision mediump float;
@@ -26,11 +28,13 @@ in vec2 TextCoord;
 out vec4 o_clr;
 uniform vec3 col_m;
 uniform sampler2D text_at;
+uniform float alpha;
 void main()
 {
      vec4 base_col = texture(text_at, TextCoord);
      vec3 caucl_col = base_col.xyz * col_m;
-	 o_clr = vec4(caucl_col,base_col.w);
+     float a = base_col.a * alpha;
+	 o_clr = vec4(caucl_col,a);
 }
 )glsl";
 namespace auto_future {
@@ -101,7 +105,6 @@ void ft_rectangle_3d::draw() {
   if (pscene == nullptr) {
     return;
   }
-
   
   af_vec3 *pview_pos = pscene->get_view_pos();
   af_vec3 *pcenter = pscene->get_center_of_prj();
@@ -112,16 +115,15 @@ void ft_rectangle_3d::draw() {
   glm::mat4 view = glm::lookAt(cam_pos, cam_dir, cam_up);
   _prect_sd->use();
   _prect_sd->uniform("view", glm::value_ptr(view));
-  float w, h;
-  pscene->get_size(w, h);
-  float aspect = w / h;
-  float near_value = _pt_tb._near > 0.f ? _pt_tb._near : pscene->get_near();
-  float far_value = _pt_tb._far > 0.f ? _pt_tb._far : pscene->get_far();
-
+  float aspect = pscene->get_aspect();
+  float near_value = _pt_tb._near > 0.01f ? _pt_tb._near : pscene->get_near();
+  float far_value = _pt_tb._far > 0.01f ? _pt_tb._far : pscene->get_far();
+   
   glm::mat4 proj = glm::perspective(glm::radians(pscene->get_fovy()), aspect,
                                     near_value, far_value);
   _prect_sd->uniform("projection", glm::value_ptr(proj));
   _prect_sd->uniform("model", glm::value_ptr(model));
+  _prect_sd->uniform("alpha", (float*)&_pt_tb._alpha_nml);
   _prect_sd->uniform("col_m",(float*)&_pt_tb._model_clr);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _pat_image->_txt_id());

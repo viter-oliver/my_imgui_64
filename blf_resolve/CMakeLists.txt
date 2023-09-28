@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 2.8)
+project(blf_resolve C CXX)
+option(BLF_RESOLVE_EXE "buld exe for resolving blf file" ON)
+include_directories(bin_log/include)
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/bin_log/lib/x64_Debug)
+if(BLF_RESOLVE_EXE)
+add_executable(blf_resolve main.cpp)
+target_link_libraries(blf_resolve binlog)
+endif()
+add_library(blf_res blf_resolve.cpp blf_resolve.h)
+target_link_libraries(blf_res binlog)
