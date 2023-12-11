@@ -18,7 +18,7 @@ namespace auto_future
 		  _pj_pt._light_specular_clr = { 1, 1, 1 };
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 
-          reg_property_handle( &_pj_pt, 12, [this]( void* memb_adress )
+          reg_property_handle( &_pj_pt, 13, [this]( void* memb_adress )
           {
                ImGui::ColorEdit4( "Color of background", (float*)&_pj_pt._bk_clr, ImGuiColorEditFlags_RGB );
                if( !_fboId )

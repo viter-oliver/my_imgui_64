@@ -44,17 +44,44 @@ namespace lua_interpreter{
 
 		for (const auto& vr:vlist) {
 			if ("int" == vr._type){
-				int *pvalue=(int*)vr._value_addr;
-				lua_pushinteger(L,*pvalue);
+				int* pvalue = (int*)vr._value_addr;
+				if (vr._cnt > 1) {
+					lua_newtable(L);
+					for (int id = 0; id < vr._cnt; ++id) {
+						lua_pushinteger(L, pvalue[id]);
+						lua_rawseti(L, -2,id + 1);
+					}
+				}	else {
+					lua_pushinteger(L,*pvalue);
+				}
+				
 			} else if ("float" == vr._type){
 				float* fvalue=(float*)vr._value_addr;
-				lua_pushnumber(L,*fvalue);
+				if (vr._cnt > 1) {
+					lua_newtable(L);
+					for (int id = 0; id < vr._cnt; ++id) {
+						lua_pushnumber(L, fvalue[id]);
+						lua_rawseti(L, -2, id + 1);
+					}
+				}	else {
+					lua_pushnumber(L,*fvalue);
+				}
+				
 			} else if("double" == vr._type){
 				double* dvalue=(double*)vr._value_addr;
-				lua_pushnumber(L,*dvalue);
-			} else if("bool" == vr._type){
-				bool* bvalue=(bool*)vr._value_addr;
-				lua_pushboolean(L,*bvalue);
+				if (vr._cnt > 1) {
+					lua_newtable(L);
+					for (int id = 0; id < vr._cnt; ++id) {
+						lua_pushnumber(L, dvalue[id]);
+						lua_rawseti(L, -2, id + 1);
+					}
+				}
+				else {
+					lua_pushnumber(L, *dvalue);
+				}
+			} else if ("bool" == vr._type) {
+				bool *bvalue = (bool *)vr._value_addr;
+				lua_pushboolean(L, *bvalue);
 			} else if("char" == vr._type){
 				char* pcvalue=(char*)vr._value_addr;
 				lua_pushstring(L,pcvalue);
@@ -141,15 +168,51 @@ namespace lua_interpreter{
 			return false;
 		}
 		auto& vr=fun_retn;
-		if ("int" == vr._type && lua_isinteger(L,-1)){
-			int *pvalue=(int*)vr._value_addr;
-			*pvalue=lua_tointeger(L,-1);
-		} else if ("float" == vr._type && lua_isnumber(L,-1)){
-			float* fvalue=(float*)vr._value_addr;
-			*fvalue=lua_tonumber(L,-1);
-		} else if("double" == vr._type && lua_isnumber(L,-1)){
-			double* dvalue=(double*)vr._value_addr;
-			*dvalue=lua_tonumber(L,-1);
+		if ("int" == vr._type) {
+			int *pvalue = (int *)vr._value_addr;
+			if (vr._cnt > 1) {
+				for (int id = 1; id <= vr._cnt; ++id) {
+					lua_rawgeti(L, -1, id);
+					if (lua_isinteger(L, -1)) {
+						*pvalue++ = lua_tointeger(L, -1);
+					}
+					lua_pop(L, 1);
+				}
+			} else {
+				if (lua_isinteger(L, -1)) {
+					*pvalue = lua_tointeger(L, -1);
+				}
+			}
+		} else if ("float" == vr._type) {
+			float *fvalue = (float *)vr._value_addr;
+			if (vr._cnt > 1) {
+				for (int id = 1; id <= vr._cnt; ++id) {
+					lua_rawgeti(L, -1, id);
+					if (lua_isnumber(L, -1)) {
+						*fvalue++ = lua_tonumber(L, -1);
+					}
+					lua_pop(L, 1);
+				}
+			} else {
+				if (lua_isnumber(L, -1)) {
+					*fvalue = lua_tonumber(L, -1);
+				}
+			}
+		} else if ("double" == vr._type) {
+			double *dvalue = (double *)vr._value_addr;
+			if (vr._cnt > 1) {
+				for (int id = 1; id <= vr._cnt; ++id) {
+					lua_rawgeti(L, -1, id);
+					if (lua_isnumber(L, -1)) {
+						*dvalue++ = lua_tonumber(L, -1);
+					}
+					lua_pop(L, 1);
+				}
+			} else {
+				if (lua_isnumber(L, -1)) {
+					*dvalue = lua_tonumber(L, -1);
+				}
+			}
 		} else if("bool" == vr._type && lua_isboolean(L,-1)){
 			bool* bvalue=(bool*)vr._value_addr;
 			*bvalue=lua_toboolean(L,-1);

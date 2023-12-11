@@ -19,6 +19,7 @@ namespace msg_utility{
     using u8 = unsigned char;
     using u16 = unsigned short;
     using u32 = unsigned int;
+    using u64 = unsigned long long;
     using msg_handle=std::function<bool(u8*,u32)>;
     using batch_cmd_handle=std::function<bool(u8*,u32)>;
     using dic_msg_handle=std::map<u16,msg_handle>;

@@ -34,10 +34,10 @@ void afg_engine::resLoaded()
 {
     printf("resloaded");
     fifo_debuger::init_var_set_fifo();
-    hud::init_controls();
-    navi::init_controls();
+    hud_inital();
     reg_debug();
     register_msg_host(g_msg_host);
+    show_ctls_hud();
     /* #Test Code Start */
     fifo_debuger::attach_var_handle("rec", [&](char *pcmd_buff) {
         g_msg_host.begin_recording(pcmd_buff);
@@ -64,29 +64,28 @@ void afg_engine::resLoaded()
         }
         return false;
     };
-
     /* #Test Code Start */
-    thread read_bin_file([&] {
-        ifstream fin(_arg_list[0], ios::binary);
-        if (fin.is_open()) {
-            while (!fin.eof()) {
-                int sleep_dur, buff_len;
-                fin.read((char *)&sleep_dur, 4);
-                fin.read((char *)&buff_len, 4);
-                sleep_dur = sleep_dur < 200 ? sleep_dur : 20;
-                this_thread::sleep_for(chrono::milliseconds(sleep_dur));
-                //this_thread::sleep_for(chrono::milliseconds(sleep_dur));
-                char *pbuff = new char[buff_len];
-                fin.read(pbuff, buff_len);
-                g_msg_host.pick_valid_data((u8 *)pbuff, buff_len);
-                delete[] pbuff;
+    //thread read_bin_file([&] {
+    //    ifstream fin(_arg_list[0], ios::binary);
+    //    if (fin.is_open()) {
+    //        //while (!fin.eof()) {
+    //        //    int sleep_dur, buff_len;
+    //        //    fin.read((char *)&sleep_dur, 4);
+    //        //    fin.read((char *)&buff_len, 4);
+    //        //    sleep_dur = sleep_dur < 200 ? sleep_dur : 20;
+    //        //    this_thread::sleep_for(chrono::milliseconds(sleep_dur));
+    //        //    //this_thread::sleep_for(chrono::milliseconds(sleep_dur));
+    //        //    char *pbuff = new char[buff_len];
+    //        //    fin.read(pbuff, buff_len);
+    //        //    g_msg_host.pick_valid_data((u8 *)pbuff, buff_len);
+    //        //    delete[] pbuff;
 
-            }
-            fin.close();
-        }
+    //        //}
+    //        fin.close();
+    //    }
 
-        });
-    read_bin_file.detach();
+    //    });
+    //read_bin_file.detach();
     /* #Test Code End */
     return;
     thread thd_uart_com([&] {

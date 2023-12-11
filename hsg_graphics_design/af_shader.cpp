@@ -727,6 +727,7 @@ bool af_shader::uniform(string unf_name, int ivalue)
 	switch (unif._variable_type)
 	{
 	case GL_SAMPLER_2D:
+	case GL_UNSIGNED_INT_SAMPLER_2D:
 		glUniform1i(unif._location, ivalue);
 		break;
 	default:

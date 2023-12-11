@@ -448,14 +448,12 @@ bool ImGui_ImplGlfwGL3_CreateDeviceObjects()
      const GLchar* fragment_shader =
           "#version 150\n"
           "uniform sampler2D Texture;\n"
-          "uniform int be_video_texture;\n"
           "in vec2 Frag_UV;\n"
           "in vec4 Frag_Color;\n"
           "out vec4 Out_Color;\n"
           "void main()\n"
           "{\n"
           "vec4 txtCol=texture( Texture, Frag_UV.st);\n"
-          "if(be_video_texture>0) txtCol.a=1;\n"
         "	Out_Color = Frag_Color * txtCol;\n"
         "}\n";
 
@@ -472,7 +470,6 @@ bool ImGui_ImplGlfwGL3_CreateDeviceObjects()
 
     g_AttribLocationTex = glGetUniformLocation(g_ShaderHandle, "Texture");
     g_AttribLocationProjMtx = glGetUniformLocation(g_ShaderHandle, "ProjMtx");
-    g_UniformLocationVideoFormat=glGetUniformLocation(g_ShaderHandle,"be_video_texture");
 #ifdef BUILD_DLL
 	g_AttribLocationcustomMtx = glGetUniformLocation(g_ShaderHandle, "customMtx");
 	g_AttribLocationcustomDelta = glGetUniformLocation(g_ShaderHandle, "customDelta");

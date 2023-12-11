@@ -6,6 +6,7 @@ precision highp float;
 layout(location=0) in vec3 position;
 layout(location=1) in vec2 textCoord;
 out vec2 TextCoord;
+out vec2 SideTextCoord;
 out vec2 BgTextCoord;
 uniform mat4 model;
 uniform mat4 view;
@@ -16,6 +17,8 @@ uniform float base_z;
 uniform float l_of;
 uniform float r_of;
 uniform float voffset;
+uniform float side_voffset;
+
 void main()
 {
     vec3 pos=position;
@@ -32,6 +35,7 @@ void main()
     }
     gl_Position = projection * view * model * vec4(pos, 1.0);
     TextCoord = vec2(textCoord.x,textCoord.y + voffset);
+    SideTextCoord = vec2(textCoord.x,textCoord.y + side_voffset);
     BgTextCoord = textCoord;
 }
 )glsl";
@@ -39,21 +43,36 @@ static const char* sd_4_curve_fs = R"glsl(#version 300 es
 precision highp float;
 in vec2 TextCoord;
 in vec2 BgTextCoord;
+in vec2 SideTextCoord;
 out vec4 o_clr;
 uniform vec3 lane_color;
 uniform vec3 lane_bg_color;
+uniform vec3 side_l_color;
+uniform vec3 side_r_color;
+uniform float mix_coeff;
 uniform float alpha;
 uniform sampler2D text_at;
+uniform sampler2D side_l_text_at;
+uniform sampler2D side_r_text_at;
 uniform sampler2D bg_text_at;
+
 void main()
 {
     vec4 base_col = texture(text_at, TextCoord);
+    vec4 side_l_col = texture(side_l_text_at, SideTextCoord);
+    vec4 side_r_col = texture(side_r_text_at, SideTextCoord);
     vec4 bg_col = texture(bg_text_at, BgTextCoord);
+
     base_col.xyz = base_col.xyz * lane_color;
+    side_l_col.xyz = side_l_col.xyz * side_l_color;
+    side_r_col.xyz = side_r_col.xyz * side_r_color;
     bg_col.xyz = bg_col.xyz * lane_bg_color;
-    vec4 t_clr = mix(base_col,bg_col,0.8);
+
+    vec4 t_clr = mix(base_col, bg_col, mix_coeff);
+    t_clr.xyz = t_clr.xyz * t_clr.a + side_l_col.xyz * side_l_col.a + side_r_col.xyz * side_r_col.a;
+    t_clr.a = t_clr.a + side_l_col.a + side_r_col.a;
     t_clr.a = t_clr.a*alpha;
-    o_clr =t_clr;
+    o_clr = t_clr;
 }
 )glsl";
 
@@ -71,41 +90,76 @@ namespace auto_future
         */
 
           _pt_tb._attached_image[ 0 ] = '\0';
-          _pt_tb._lane_clr = { 1.f,1.f,1.f };
+          _pt_tb._attached_side_l_image[ 0 ] = '\0';
+          _pt_tb._attached_side_r_image[ 0 ] = '\0';
+          _pt_tb._attached_bg_image[ 0 ] = '\0';
+
+          _pt_tb._lane_clr = _pt_tb._lane_bg_clr = _pt_tb._side_l_clr = _pt_tb._side_r_clr = { 1.f,1.f,1.f };
           _pt_tb._coeff_hac[ 0 ] = _pt_tb._coeff_hac[ 1 ] = _pt_tb._coeff_hac[ 2 ] = _pt_tb._coeff_hac[ 3 ] = 0.f;
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
-          reg_property_handle( &_pt_tb, 0, [this]( void* member_address )
-          {
-               if( _pat_image )
-               {
-                    ImGui::Text( "Attached image:%s", _pt_tb._attached_image );
-                    ImGui::SameLine();
-                    if( ImGui::Button( "Delink##attimage" ) )
-                    {
-                         _pat_image = nullptr;
-                    }
-               }
-               else
-               {
-                    ImGui::InputText( "Attached image:", _pt_tb._attached_image, FILE_NAME_LEN );
-                    if( ImGui::Button( "Import" ) )
-                    {
-                         auto itxt = g_mtexture_list.find( _pt_tb._attached_image );
-                         if( itxt != g_mtexture_list.end() )
-                         {
-                              _pat_image = itxt->second;
-                         }
-                    }
-               }
-          } );
+          reg_property_handle(&_pt_tb, 0, [this](void *member_address) {
+              if (_pat_image) {
+                  ImGui::Text("Attached image:%s", _pt_tb._attached_image);
+                  ImGui::SameLine();
+                  if (ImGui::Button("Delink##attimage")) {
+                      _pat_image = nullptr;
+                  }
+              }
+              else {
+                  ImGui::InputText("Attached image:", _pt_tb._attached_image, FILE_NAME_LEN);
+                  if (ImGui::Button("Import")) {
+                      auto itxt = g_mtexture_list.find(_pt_tb._attached_image);
+                      if (itxt != g_mtexture_list.end()) {
+                          _pat_image = itxt->second;
+                      }
+                  }
+              }
+          });
           reg_property_handle(&_pt_tb, 1, [this](void *member_address) {
+              if (_pat_side_l_image) {
+                  ImGui::Text("Attached side left image:%s", _pt_tb._attached_side_l_image);
+                  ImGui::SameLine();
+                  if (ImGui::Button("Delink##attside_limage")) {
+                      _pat_side_l_image = nullptr;
+                  }
+              }
+              else {
+                  ImGui::InputText("Attached side_l image:", _pt_tb._attached_side_l_image, FILE_NAME_LEN);
+                  if (ImGui::Button("Import##side_l")) {
+                      auto itxt = g_mtexture_list.find(_pt_tb._attached_side_l_image);
+                      if (itxt != g_mtexture_list.end()) {
+                          _pat_side_l_image = itxt->second;
+                      }
+                  }
+              }
+          });
+          reg_property_handle(&_pt_tb, 2, [this](void *member_address) {
+              if (_pat_side_r_image) {
+                  ImGui::Text("Attached side right image:%s", _pt_tb._attached_side_r_image);
+                  ImGui::SameLine();
+                  if (ImGui::Button("Delink##attside_rimage")) {
+                      _pat_side_r_image = nullptr;
+                  }
+              }
+              else {
+                  ImGui::InputText("Attached side_r image:", _pt_tb._attached_side_r_image, FILE_NAME_LEN);
+                  if (ImGui::Button("Import##side_r")) {
+                      auto itxt = g_mtexture_list.find(_pt_tb._attached_side_r_image);
+                      if (itxt != g_mtexture_list.end()) {
+                          _pat_side_r_image = itxt->second;
+                      }
+                  }
+              }
+          });
+          reg_property_handle(&_pt_tb, 3, [this](void *member_address) {
               if (_pat_bg_image) {
                   ImGui::Text("Attached bg image:%s", _pt_tb._attached_bg_image);
                   ImGui::SameLine();
                   if (ImGui::Button("Delink##attbgimage")) {
                       _pat_bg_image = nullptr;
                   }
-              } else {
+              }
+              else {
                   ImGui::InputText("Attached bg image:", _pt_tb._attached_bg_image, FILE_NAME_LEN);
                   if (ImGui::Button("Import##bg")) {
                       auto itxt = g_mtexture_list.find(_pt_tb._attached_bg_image);
@@ -115,8 +169,6 @@ namespace auto_future
                   }
               }
           });
-
-
 #endif
      }
 
@@ -124,15 +176,22 @@ namespace auto_future
      {
 
      }
-     const int curve_len = 200;
+     const int curve_len = 1000;
      const int point_cnt = curve_len * 2 + 2;
 
      void ft_3_times_road_curve_3d::link()
      {
-          auto iat = g_mtexture_list.find( _pt_tb._attached_image );
-          if( iat != g_mtexture_list.end() )
-          {
+          auto iat = g_mtexture_list.find(_pt_tb._attached_image );
+          if( iat != g_mtexture_list.end()) {
                _pat_image = iat->second;
+          }
+          auto side_lat = g_mtexture_list.find(_pt_tb._attached_side_l_image);
+          if (side_lat != g_mtexture_list.end()) {
+              _pat_side_l_image = side_lat->second;
+          }
+          auto side_rat = g_mtexture_list.find(_pt_tb._attached_side_r_image);
+          if (side_rat != g_mtexture_list.end()) {
+              _pat_side_r_image = side_rat->second;
           }
           auto bgat = g_mtexture_list.find(_pt_tb._attached_bg_image);
           if (bgat != g_mtexture_list.end()) {
@@ -169,59 +228,69 @@ namespace auto_future
               delete[] vertices;
           }
      }
-
      void ft_3_times_road_curve_3d::draw()
      {
-         if (!_pat_image || !_pat_bg_image) {
+         if (!_pat_image || !_pat_bg_image || !_pat_side_l_image || !_pat_side_r_image) {
              return;
          }
-          glm::mat4 model;
-          auto pd = get_parent();
-          ft_light_scene* pscene = nullptr;
-          while (pd) {
-              if (typeid(*pd) == typeid(ft_light_scene)) {
-                  pscene = static_cast<ft_light_scene*>(pd);
-                  break;
-              }
-              else if (typeid(*pd) == typeid(ft_trans)) {
-                  ft_trans* pnode = static_cast<ft_trans*>(pd);
-                  pnode->transform(model);
-              }
-              pd = pd->get_parent();
-          }
-          af_vec3* pview_pos = pscene->get_view_pos();
-          af_vec3* pcenter = pscene->get_center_of_prj();
-          af_vec3* pup = pscene->get_up();
-          glm::vec3 cam_pos( pview_pos->x, pview_pos->y, pview_pos->z );
-          glm::vec3 cam_dir( pcenter->x, pcenter->y, pcenter->z );
-          glm::vec3 cam_up( pup->x, pup->y, pup->z );
-          glm::mat4 view = glm::lookAt( cam_pos, cam_dir, cam_up );
-          _phud_sd->use();
-          _phud_sd->uniform( "view", glm::value_ptr( view ) );
-          float aspect = pscene->get_aspect();
-		  float near_value = _pt_tb._near>0.f ? _pt_tb._near : pscene->get_near();
-		  float far_value = _pt_tb._far>0.f ? _pt_tb._far : pscene->get_far();
+         glm::mat4 model;
+         auto pd = get_parent();
+         ft_light_scene *pscene = nullptr;
+         while (pd) {
+             if (typeid(*pd) == typeid(ft_light_scene)) {
+                 pscene = static_cast<ft_light_scene *>(pd);
+                 break;
+             }
+             else if (typeid(*pd) == typeid(ft_trans)) {
+                 ft_trans *pnode = static_cast<ft_trans *>(pd);
+                 pnode->transform(model);
+             }
+             pd = pd->get_parent();
+         }
+         af_vec3 *pview_pos = pscene->get_view_pos();
+         af_vec3 *pcenter = pscene->get_center_of_prj();
+         af_vec3 *pup = pscene->get_up();
+         glm::vec3 cam_pos(pview_pos->x, pview_pos->y, pview_pos->z);
+         glm::vec3 cam_dir(pcenter->x, pcenter->y, pcenter->z);
+         glm::vec3 cam_up(pup->x, pup->y, pup->z);
+         glm::mat4 view = glm::lookAt(cam_pos, cam_dir, cam_up);
+         _phud_sd->use();
+         _phud_sd->uniform("view", glm::value_ptr(view));
+         float aspect = pscene->get_aspect();
+         float near_value = _pt_tb._near > 0.f ? _pt_tb._near : pscene->get_near();
+         float far_value = _pt_tb._far > 0.f ? _pt_tb._far : pscene->get_far();
 
-          glm::mat4 proj = glm::perspective( glm::radians(pscene->get_fovy() ), aspect, near_value, far_value );
-          _phud_sd->uniform( "projection", glm::value_ptr( proj ) );
-          
-          _phud_sd->uniform("model", glm::value_ptr(model));
-          _phud_sd->uniform( "c[0]", _pt_tb._coeff_hac );
-          _phud_sd->uniform( "u_l", &_pt_tb._u_l);
-          _phud_sd->uniform( "base_z", &_pt_tb._base_z );
-          _phud_sd->uniform("l_of", &_pt_tb._l_of);
-          _phud_sd->uniform("r_of", &_pt_tb._r_of);
-          _phud_sd->uniform("voffset", &_pt_tb._voffset);
-          _phud_sd->uniform("alpha", &_pt_tb._alpha_nml);
-          _phud_sd->uniform("lane_color", (float*) & _pt_tb._lane_clr);
-          _phud_sd->uniform("lane_bg_color", (float *)&_pt_tb._lane_bg_clr);
-          glActiveTexture( GL_TEXTURE0 );
-          glBindTexture( GL_TEXTURE_2D, _pat_image->_txt_id() );
-          _phud_sd->uniform( "text_at", 0 );
-          glActiveTexture(GL_TEXTURE1);
-          glBindTexture(GL_TEXTURE_2D, _pat_bg_image->_txt_id());
-          _phud_sd->uniform("bg_text_at", 1);
-          glBindVertexArray( _ps_prm->_vao );
-          glDrawArrays( GL_TRIANGLE_STRIP, 0, point_cnt );
+         glm::mat4 proj = glm::perspective(glm::radians(pscene->get_fovy()), aspect, near_value, far_value);
+         _phud_sd->uniform("projection", glm::value_ptr(proj));
+
+         _phud_sd->uniform("model", glm::value_ptr(model));
+         _phud_sd->uniform("c[0]", _pt_tb._coeff_hac);
+         _phud_sd->uniform("u_l", &_pt_tb._u_l);
+         _phud_sd->uniform("base_z", &_pt_tb._base_z);
+         _phud_sd->uniform("l_of", &_pt_tb._l_of);
+         _phud_sd->uniform("r_of", &_pt_tb._r_of);
+         _phud_sd->uniform("voffset", &_pt_tb._voffset);
+         _phud_sd->uniform("side_voffset", &_pt_tb._side_voffset);
+         _phud_sd->uniform("alpha", &_pt_tb._alpha_nml);
+         _phud_sd->uniform("mix_coeff", &_pt_tb._mix_nml);
+         _phud_sd->uniform("lane_color", (float *)&_pt_tb._lane_clr);
+         _phud_sd->uniform("side_l_color", (float *)&_pt_tb._side_l_clr);
+         _phud_sd->uniform("side_r_color", (float *)&_pt_tb._side_r_clr);
+         _phud_sd->uniform("lane_bg_color", (float *)&_pt_tb._lane_bg_clr);
+
+         glActiveTexture(GL_TEXTURE0);
+         glBindTexture(GL_TEXTURE_2D, _pat_image->_txt_id());
+         _phud_sd->uniform("text_at", 0);
+         glActiveTexture(GL_TEXTURE1);
+         glBindTexture(GL_TEXTURE_2D, _pat_side_l_image->_txt_id());
+         _phud_sd->uniform("side_l_text_at", 1);
+         glActiveTexture(GL_TEXTURE2);
+         glBindTexture(GL_TEXTURE_2D, _pat_side_r_image->_txt_id());
+         _phud_sd->uniform("side_r_text_at", 2);
+         glActiveTexture(GL_TEXTURE3);
+         glBindTexture(GL_TEXTURE_2D, _pat_bg_image->_txt_id());
+         _phud_sd->uniform("bg_text_at", 3);
+         glBindVertexArray(_ps_prm->_vao);
+         glDrawArrays(GL_TRIANGLE_STRIP, 0, point_cnt);
      }
 }

@@ -5,6 +5,7 @@ namespace auto_future
 	ft_slider_thumb::ft_slider_thumb()
 	{
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
+		_img_pt._thumb_id_txt = {0,0};
 		reg_property_handle(&_img_pt, 5, [this](void*){
 			if (ImGui::Checkbox("Keep min scale", &_keep_min_scale) && _keep_min_scale)
 			{

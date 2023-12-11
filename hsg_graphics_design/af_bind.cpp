@@ -21,7 +21,7 @@ void calcu_bind_node(prop_ele_position& pep)
         auto& fdidx = ref_pos._field_index;
         auto& field = ref_pos._pobj->get_filed_ele(pgidx, fdidx);
         char* ppt_addr = field._address;
-        var_unit vrtn(field._type, ppt_addr);
+        var_unit vrtn(field._type, ppt_addr,field._count);
         variable_list vlist;
         auto& param_list = ibind_ut->second->_param_list;
         for (auto& param:param_list)
@@ -30,7 +30,7 @@ void calcu_bind_node(prop_ele_position& pep)
           auto& cfdidx = param._field_index;
           auto& cfel = param._pobj->get_filed_ele(cpgidx,cfdidx);
           char* pm_value = cfel._address;
-          vlist.emplace_back(cfel._type,pm_value);
+          vlist.emplace_back(cfel._type,pm_value,cfel._count);
         }
         auto& exp_calcu = ibind_ut->second->_expression;
         #ifdef _PYTHON_BIND

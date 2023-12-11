@@ -125,7 +125,7 @@ void bind_edit::bind_source_view()
 	auto& param_list = prop_ele_unit._param_list;
 	string param_pass;
 	char* ppt_addr = cur_field._address;
-	var_unit vrtn(cur_field._type, ppt_addr);
+	var_unit vrtn(cur_field._type, ppt_addr,cur_field._count);
 	variable_list vlist;
 	for (auto itp = param_list.begin(); itp != param_list.end();)//(auto&prop_ele_p:prop_ele_unit._param_list)
 	{
@@ -146,7 +146,7 @@ void bind_edit::bind_source_view()
 		auto& fidx = prop_ele_p._field_index;
 		field_ele &fel = prop_ele_p._pobj->get_filed_ele(pgidx,fidx);
 		char* pm_value = fel._address;
-		vlist.emplace_back(var_unit(fel._type, pm_value));
+		vlist.emplace_back(var_unit(fel._type, pm_value,fel._count));
 		va += "::";
 		va += fel._name;
 		ImGui::Text(va.c_str());
