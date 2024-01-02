@@ -41,8 +41,7 @@ namespace auto_future
 			_win_width = w_width;
 			_win_height = w_height;
 		}
-          void set_rotate_angle( float angle );
-          void set_rotate_axis_pos( float px, float py );
+    void create_distortion_screen();
 	};
 }
 

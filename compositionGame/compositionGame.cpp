@@ -30,7 +30,7 @@
 #include <windows.h>
 
 string g_current_running_directory;
-
+const int max_path_len = 1024;
 void listFiles( const char * dir )
 {
      using namespace std;
@@ -89,7 +89,12 @@ static bool get_font_item(void *data, int idx, const char **out_str) {
 }
 // string g_current_run_path;
 #include <windows.h>
-
+struct book_unit {
+  string name;
+  wstring content;
+  int total_score=0;
+  int final_score=0;
+};
 int main(int argc, char *argv[]) {
   // Setup window
   string running_app = argv[0];
@@ -114,62 +119,75 @@ int main(int argc, char *argv[]) {
 	iw = mode->width;
 	ih = mode->height;
 #endif
-  // GLFWwindow* window = glfwCreateWindow(iw, ih, "Graphics app", pmornitor,
-  // NULL);//full screen
   GLFWwindow *window = glfwCreateWindow(1600, 1300, "Graphics app", NULL, NULL);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1); // Enable vsync
   gl3wInit();
 
-  // Setup ImGui binding
   ImGui::CreateContext();
-  // ImGuiIO& io = ImGui::GetIO(); //(void)io;
-  // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard
-  // Controls io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable
-  // Gamepad Controls
+
   ImGui_ImplGlfwGL3_Init(window, true);
 
-  // Setup style
-  // ImGui::StyleColorsLight();
-  // ImGui::StyleColorsClassic();
   ImGui::StyleColorsDark();
-  // Load Fonts
-  // - If no fonts are loaded, dear imgui will use the default font. You can
-  // also load multiple fonts and use ImGui::PushFont()/PopFont() to select
-  // them.
-  // - AddFontFromFileTTF() will return the ImFont* so you can store it if you
-  // need to select the font among multiple.
-  // - If the file cannot be loaded, the function will return NULL. Please
-  // handle those errors in your application (e.g. use an assertion, or display
-  // an error and quit).
-  // - The fonts will be rasterized at a given size (w/ oversampling) and stored
-  // into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which
-  // ImGui_ImplXXXX_NewFrame below will call.
-  // - Read 'misc/fonts/README.txt' for more instructions and details.
-  // - Remember that in C/C++ if you want to include a backslash \ in a string
-  // literal you need to write a double backslash \\ !
-  // io.Fonts->AddFontDefault();
-  // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f,
-  // NULL, io.Fonts->GetGlyphRangesChinese());
 
-  // io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-  // io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f, NULL,
-  // io.Fonts->GetGlyphRangesChinese());
-  // io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
-  // io.Fonts->AddFontFromFileTTF("D:\\Qt\\Qt5.6.2\\5.6\\Src\\qtbase\\lib\\fonts\\DejaVuSerif-BoldOblique.ttf",
-  // 16.0f, NULL, io.Fonts->GetGlyphRangesChinese());
-
-  // ImFont* font =
-  // io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f,
-  // NULL, io.Fonts->GetGlyphRangesJapanese()); IM_ASSERT(font != NULL);
-  /*	char buffer[MAX_PATH];
-          GetCurrentDirectory(MAX_PATH, buffer);
-          g_current_run_path = buffer;
-          g_current_run_path += "\\";*/
-  // ImVec2 edit_window_size = ImVec2()
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
   shared_ptr<ft_essay> sptr_essay = make_shared<ft_essay>();
-  wstring wstr_content;
+
+  vector<book_unit> book_list;
+  auto load_file_2_content = [](string& file_name, wstring& content) {
+    ifstream fin;
+    fin.open(file_name, ios::binary);
+    auto utf8ToWstring = [](const std::string& str,wstring& wstr) {
+      std::wstring_convert<std::codecvt_utf8<wchar_t>> strCnv;
+      wstr= strCnv.from_bytes(str);
+    };
+    if (fin.is_open()) {
+      auto file_size = fin.tellg();
+      fin.seekg(0, ios::end);
+      file_size = fin.tellg() - file_size;
+      fin.seekg(0, ios::beg);
+      string str_buff;
+      str_buff.resize((int)file_size + 1);
+      fin.read(&str_buff[0], file_size);
+      str_buff[file_size] = 0;
+
+      fin.close();
+
+      if (str_buff[0] == 0xff && str_buff[1] == 0xfe) // unicode
+      {
+        auto wsz = ((int)file_size - 2) / 2;
+        content.resize(wsz);
+        memcpy(&content[0], &str_buff[2], wsz * 2);
+      }
+      else if ((unsigned char)str_buff[0] == 0xef &&
+        (unsigned char)str_buff[1] == 0xbb) {// utf 8 bom
+        utf8ToWstring(str_buff.substr(3),content);
+      } else {
+        utf8ToWstring(str_buff,content);
+      }
+    }
+  };
+  int cid = 0;
+  bool finish_all_test = false;
+  auto cur_content = [&]()->wstring& {return book_list[cid].content; };
+
+  sptr_essay->set_trig([&](score_state gtriger) {
+    auto& cur_book = book_list[cid];
+    cur_book.final_score = scale_score[gtriger] * cur_book.total_score;
+    int e_cnt = 0;
+    while (book_list[cid].final_score == 0 && e_cnt < book_list.size()) {
+      e_cnt++;
+      cid++;
+      cid %= book_list.size();
+    }
+    if (e_cnt == (book_list.size() - 1)) {
+      finish_all_test = true;
+    } else {
+      sptr_essay->load_content(book_list[cid].content);
+      finish_all_test = false;
+    }
+  });
+  string cur_directory;
   string cur_ebook_path;
   // Main loop
   while (!glfwWindowShouldClose(window)) {
@@ -188,95 +206,86 @@ int main(int argc, char *argv[]) {
                  ImGuiWindowFlags_NoMove);
     ImGui::BeginChild("Setup", ImVec2(1500, 200), true,
                       ImGuiWindowFlags_NoMove);
-    auto &ft_nm_list = g_pfont_face_manager->get_dic_fonts();
-    static int _font_id = 0;
-    ImGui::TextColored(ImVec4(1, 0, 0, 1), "Game state:%s",
-                       sptr_essay->game_state.c_str());
-    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Time consume:%d seconds",
-                       sptr_essay->consume_seconds);
+      auto &ft_nm_list = g_pfont_face_manager->get_dic_fonts();
+      static int _font_id = 0;
+      ImGui::TextColored(ImVec4(1, 0, 0, 1), "Game state:%s",
+                         sptr_essay->game_state.c_str());
+      ImGui::TextColored(ImVec4(1, 1, 0, 1), "Time consume:%d seconds",
+                         sptr_essay->consume_seconds);
 
-    ImGui::Combo("font:", &_font_id, &get_font_item, 0, ft_nm_list.size());
+      ImGui::Combo("font:", &_font_id, &get_font_item, 0, ft_nm_list.size());
 
-    if (ft_nm_list.size() > 0) {
-      sptr_essay->set_font(ft_nm_list[_font_id]);
-    }
-
-    if (sptr_essay->is_gaming()) {
-      if (ImGui::Button("restore")) {
-        sptr_essay->load_content(wstr_content);
+      if (ft_nm_list.size() > 0) {
+        sptr_essay->set_font(ft_nm_list[_font_id]);
       }
-    } else {
-      if (ImGui::Button("...")) {
-        OPENFILENAME ofn = {sizeof(OPENFILENAME)};
-        ofn.hwndOwner = GetForegroundWindow();
-        ofn.lpstrFilter = "valid file:\0*.txt\0\0";
-        char strFileName[MAX_PATH] = {0};
-        ofn.nFilterIndex = 1;
-        ofn.lpstrFile = strFileName;
-        ofn.nMaxFile = sizeof(strFileName);
-        ofn.lpstrTitle = "select a txt please!";
-        ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-        if (GetOpenFileName(&ofn)) {
-          printf("open file%s\n", strFileName);
-          cur_ebook_path = strFileName;
-          ifstream fin;
-          fin.open(cur_ebook_path, ios::binary);
-          auto utf8ToWstring = [](const std::string &str) {
-            std::wstring_convert<std::codecvt_utf8<wchar_t>> strCnv;
-            return strCnv.from_bytes(str);
-          };
-          if (fin.is_open()) {
-            auto file_size = fin.tellg();
-            fin.seekg(0, ios::end);
-            file_size = fin.tellg() - file_size;
-            fin.seekg(0, ios::beg);
-            string str_buff;
-            str_buff.resize((int)file_size + 1);
-            fin.read(&str_buff[0], file_size);
-            str_buff[file_size] = 0;
 
-            fin.close();
-
-            if (str_buff[0] == 0xff && str_buff[1] == 0xfe) // unicode
-            {
-              auto wsz = ((int)file_size - 2) / 2;
-              wstr_content.resize(wsz);
-              memcpy(&wstr_content[0], &str_buff[2], wsz * 2);
-            } else if ((unsigned char)str_buff[0] == 0xef &&
-                       (unsigned char)str_buff[1] == 0xbb) // utf 8 bom
-            {
-
-              wstr_content = utf8ToWstring(str_buff.substr(3));
-            } else {
-
-              wstr_content = utf8ToWstring(str_buff);
+      if (!finish_all_test) {
+        if (ImGui::Button("restore")) {
+          sptr_essay->load_content(cur_content());
+        }
+      } else {
+        
+        if (ImGui::Button("...")) {
+          OPENFILENAME ofn = {sizeof(OPENFILENAME)};
+          ofn.hwndOwner = GetForegroundWindow();
+          ofn.lpstrFilter = "valid file:\0*.txt\0\0";
+          char strFileName[max_path_len] = {0};
+          ofn.nFilterIndex = 1;
+          ofn.lpstrFile = strFileName;
+          ofn.nMaxFile = 1024;
+          ofn.lpstrTitle = "select txts please!";
+          ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_ALLOWMULTISELECT| OFN_EXPLORER;
+          if (GetOpenFileName(&ofn)) {
+            book_list.clear();
+            printf("open file%s\n", strFileName);
+            char* pstr = ofn.lpstrFile;
+            cur_directory = ofn.lpstrFile;
+            pstr += (cur_directory.length() + 1);
+            while (*pstr) {
+              book_list.push_back(book_unit());
+              auto& cur_book = *(book_list.end() - 1);
+              auto& book = cur_book.name;
+              auto& content = cur_book.content;
+              book = pstr;
+              string file_name = cur_directory +"\\"+ book;
+              load_file_2_content(file_name, content);
+              pstr += (book.length() + 1);
             }
-            sptr_essay->load_content(wstr_content);
+            float total_sz = 0.f;
+            for (auto& bk : book_list) {
+              total_sz += bk.content.size();
+            }
+            finish_all_test = false;
+            for (auto& bk : book_list) {
+              bk.total_score = bk.content.size()*100.f / total_sz;
+            }
+            sptr_essay->load_content(cur_content());
+            //sptr_essay->shuffle();
           }
         }
+        ImGui::SameLine();
+        ImGui::Text("Ebook name:%s", cur_ebook_path.c_str());
       }
-      ImGui::SameLine();
-      ImGui::Text("Ebook name:%s", cur_ebook_path.c_str());
-    }
 
-    if (ImGui::Button("Shuffle")) {
-      sptr_essay->shuffle();
-    }
-    ImGui::SliderFloat("Line spacing", &sptr_essay->line_spacing, 10.f, 100.f);
-    ImGui::SliderFloat("Horizontal margin", &sptr_essay->hmargin, 20.f, 100.f);
-    ImGui::SliderFloat("Vertical margin", &sptr_essay->vmargin, 30.f, 100.f);
-    ImGui::SliderInt("Font size", &sptr_essay->font_size, 20, 50);
+      ImGui::SliderFloat("Line spacing", &sptr_essay->line_spacing, 10.f, 100.f);
+      ImGui::SliderFloat("Horizontal margin", &sptr_essay->hmargin, 20.f, 100.f);
+      ImGui::SliderFloat("Vertical margin", &sptr_essay->vmargin, 30.f, 100.f);
+      ImGui::SliderInt("Font size", &sptr_essay->font_size, 20, 50);
 
     ImGui::EndChild();
     // ImGui::SetNextWindowSize( ImVec2( 800, 1000 ), ImGuiCond_FirstUseEver );
-
     ImGui::BeginChild("content", ImVec2(0, 0), true, ImGuiWindowFlags_NoMove);
-    //
-    // auto wsz = ImGui::GetWindowSize();
-    // ImGui::Text("windows sz:%f,%f",wsz.x,wsz.y);
-    if (sptr_essay) {
+    if (!finish_all_test) {
       sptr_essay->draw();
+    } else {
+      int final_score = 0;
+      for (auto& bk : book_list) {
+        final_score += bk.final_score;
+      }
+      ImGui::Text("your final score is %d!", final_score);
     }
+
+      
     ImGui::EndChild();
     ImGui::End();
     // Rendering

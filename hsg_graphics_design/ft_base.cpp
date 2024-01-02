@@ -49,7 +49,7 @@ namespace auto_future
 
      }
 
-     void ft_base::draw()
+    void ft_base::draw()
 	{
           /**
 		auto pbase = get_parent();

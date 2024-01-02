@@ -1,0 +1,7 @@
+set(fl2_src fl2_common.c fl2_compress.c fl2_decompress.c fl2_pool.c fl2_threading.c)
+set(lzma_src lzma_dec_x86_64.asm lzma2_dec.c lzma2_enc.c)
+set(radix_src radix_bitpack.c radix_mf.c radix_struct.c)
+set(other_src dict_buffer.c range_enc.c util.c xxhash.c)
+add_library(lzma SHARED ${fl2_src} ${lzma_src} ${radix_src} ${other_src})
+add_executable(test_flzma test_flzma.cpp)
+target_link_libraries(test_flzma lzma)

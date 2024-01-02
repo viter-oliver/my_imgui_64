@@ -3,6 +3,69 @@
 #include <functional>
 #include <chrono>
 #include <fstream>
+/**
+      img=imread
+         |
+         spilt
+         |
+     ----------
+     |        |
+   ori_red  ori_green
+     |        |
+    get_img_binary
+     |        |
+  red_th   green_th
+     |        |
+       erode
+     |        |
+   er_red   er_green
+     |        |
+    findContours
+    |          |
+contours_red contours_green
+    |          |
+ cut_contour_2_sides
+    |          |
+ sides_red  sides_green
+    |          |
+  sort_sides_by_mid
+    sort_by_xmin
+    |          |
+   combine_2_sides
+         |
+      tmp_sides
+         |
+combine_midpt_of_side_2_curve
+   |             |
+ h_lines      v_lines
+      |          |
+      smooth_curve
+      |          |
+      approxPolyDP
+      |          |
+  ah_lines   av_lines
+      |          |
+      offset_curve
+      |          |
+      extend_curve
+      |          |
+    fill_points_2_gap
+      |          |
+   bh_lines  bv_lines
+      |          |
+          f_its 
+            |
+  hlines_ids vlines_ids top_sd_left left_sd_top 
+          |                  
+       _ref_sides       _blocks
+          |                 |
+  find ideal rectangle      |
+          |                 |
+  top bottom left right     |
+                         txt_dic
+                            |
+                        get rid of empty points
+*/
 using namespace cv;
 using namespace std;
 using namespace chrono;
@@ -10,7 +73,7 @@ struct dic_uint {
   uint16_t x, y;
 };
 int txt_w = 1920, txt_h = 720;
-int bk_x_cnt = 24, bk_y_cnt = 9,o_unit_bk_sz=80;
+int o_unit_bk_sz = 80, bk_x_cnt = txt_w/o_unit_bk_sz, bk_y_cnt = txt_h/o_unit_bk_sz;
 const uint uimax = -1;
 namespace block_detect {
   using namespace std;
@@ -554,9 +617,33 @@ int main(int argc, char** argv) {
   sort_sides_by_mid(sides_red);
   sort_sides_by_mid(sides_green);
   
+
+  auto cal_rang = []( std::vector<uint>& id_range) {
+      id_range.resize(bk_y_cnt * 2 + 2);
+      id_range[0] = 0;
+      id_range[1] = bk_x_cnt / 2;
+      uint num_row_size = bk_y_cnt + 1;
+
+      for (int idx = 2; idx < id_range.size(); idx++) {
+          if (idx == num_row_size) {
+              id_range[idx] = id_range[idx - 1] + bk_x_cnt / 2;
+          }
+          else {
+              id_range[idx] = id_range[idx - 1] + bk_x_cnt;
+          }
+      };
+  };
+
+  std::vector<uint> lines_id_range_a;
+  cal_rang(lines_id_range_a);
+
   std::vector<uint> lines_id_range =
   {  0, 12, 36, 60, 84, 108,132,156,180,204,//rows
     216,240,264,288,312,336,360,384,408,432};//cols
+
+  uint end_row_id = lines_id_range[bk_y_cnt];
+  uint start_col_id = lines_id_range[bk_y_cnt + 1];
+
   auto sort_by_xmin = [&](segments& smt_list) {
     for (int id = 0; id < lines_id_range.size()-1; id++) {
       std::sort(smt_list.begin() + lines_id_range[id], smt_list.begin() + lines_id_range[id + 1], [](side& s1, side& s2) {
@@ -662,9 +749,9 @@ int main(int argc, char** argv) {
       }
     }
   };
-  {
+  {//
     for (int id = 0; id < lines_id_range.size() - 1; id++) {
-      if (0==lines_id_range[id]|| 204 == lines_id_range[id]) {
+      if (0==lines_id_range[id]|| end_row_id == lines_id_range[id]) {
         for (int ix = lines_id_range[id]; ix < lines_id_range[id + 1]; ix++) {
           tmp_sides.push_back(side());
           auto& sd_red_part = tmp_sides[tmp_sides.size() - 1];
@@ -678,7 +765,7 @@ int main(int argc, char** argv) {
           }
         }
       }
-      else if (lines_id_range[id]<204) {
+      else if (lines_id_range[id]<end_row_id) {
         for (int ix = lines_id_range[id]; ix < lines_id_range[id + 1]; ix++) {
           tmp_sides.push_back(side());
           auto& sd_o = tmp_sides[tmp_sides.size() - 1];
@@ -687,7 +774,7 @@ int main(int argc, char** argv) {
         }
       } 
       else {
-        auto rem = (lines_id_range[id] - 216) / 24;
+        auto rem = (lines_id_range[id] - start_col_id) / bk_x_cnt;
         auto odd_num = rem % 2;
         segments* pforward_sds=nullptr, * pafterward_sds = nullptr;
         if (odd_num == 0) { //red first
@@ -826,9 +913,9 @@ int main(int argc, char** argv) {
       }
     }
   };
-  vector<curve> h_lines(10),v_lines(25);
-  for (int ix = 0; ix < 10; ix++) {
-    auto col_start = ix * 24,col_end=(ix+1)*24;
+  vector<curve> h_lines(bk_y_cnt + 1),v_lines(bk_x_cnt+1);
+  for (int ix = 0; ix < bk_y_cnt + 1; ix++) {
+    auto col_start = ix * bk_x_cnt, col_end=(ix+1)* bk_x_cnt;
     auto& hL = h_lines[ix];
     for (int icol = col_start; icol < col_end; icol++) {
       //combine_side_2_curve(hL, tmp_sides[icol]);
@@ -836,11 +923,11 @@ int main(int argc, char** argv) {
       combine_midpt_of_side_2_curve(hL, tmp_sides[icol],end,false);
     }
   }
-  for (int ix = 0; ix < 25; ix++) {
+  for (int ix = 0; ix < bk_x_cnt + 1; ix++) {
     //auto row_start = 240 + ix;
     auto& vL = v_lines[ix];
     for (int irow = 0; irow < 9; irow++) {
-      auto sid = 240 + ix + irow * 25;
+      auto sid = 240 + ix + irow * (bk_x_cnt + 1);
       //combine_side_2_curve(vL, tmp_sides[sid]);
       auto end = irow == 8;
       combine_midpt_of_side_2_curve(vL, tmp_sides[sid],end,true);
@@ -936,7 +1023,7 @@ int main(int argc, char** argv) {
   draw_curves_2_image(h_lines, ori_cv, { 0,255,255 });
   draw_curves_2_image(v_lines, ori_cv, { 130, 0, 75 });
   imshow("ori_cv", ori_cv);
-  const int hlines_cnt = 10, vlines_cnt = 25;
+  const int hlines_cnt = bk_y_cnt + 1, vlines_cnt = bk_x_cnt + 1;
   vector<curve> ah_lines(hlines_cnt), av_lines(vlines_cnt);
   double epilon = 7;
 
@@ -1059,12 +1146,14 @@ int main(int argc, char** argv) {
     }
   };
   vector<int> hlines_ids(hlines_cnt, 0), vlines_ids(vlines_cnt, 0);
-  side top_sd_left[hlines_cnt], left_sd_top[vlines_cnt];
+
+  side* top_sd_left=new side[hlines_cnt], *left_sd_top=new side[vlines_cnt];
   const auto sides_cnt = vlines_cnt * (hlines_cnt - 1) + hlines_cnt * (vlines_cnt-1);
   _ref_sides.resize(sides_cnt);
   const auto  blk_cnt = (hlines_cnt - 1) * (vlines_cnt - 1);
   _blocks.resize(blk_cnt, { _ref_sides });
   const auto vside_base_id = hlines_cnt * (vlines_cnt - 1);
+
   for (int hcv_id = 0; hcv_id < hlines_cnt; hcv_id++) {
     auto& hcurve = bh_lines[hcv_id];
     auto& cur_hid = hlines_ids[hcv_id];
@@ -1092,7 +1181,7 @@ int main(int argc, char** argv) {
         cur_bk.right_side_id = cur_bk.left_side_id + 1;
       }
     }
-  }
+  } 
   //find ideal rectangle
   uint top{0}, bottom{ uimax }, left{0}, right{ uimax };
   for (int ix = 0; ix < vlines_cnt-1; ix++) {
@@ -1351,6 +1440,8 @@ int main(int argc, char** argv) {
   of_txt_dic.open(fname, ios::binary);
   of_txt_dic.write((const char*)&txt_dic[0], sizeof(dic_uint)* txt_dic.size());
   of_txt_dic.close();
+  delete[] top_sd_left;
+  delete[] left_sd_top;
   imshow("ori_green", ori_green);
   //cv::imwrite("ori_green.png", ori_green);
   imshow("ori_red", ori_red);
@@ -1360,9 +1451,4 @@ int main(int argc, char** argv) {
   cv::imwrite("ori.png", ori);
   cv::waitKey(0);
   return 0;/**/
-  
-
-
-
-  return 0;
 }

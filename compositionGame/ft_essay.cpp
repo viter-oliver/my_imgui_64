@@ -3,6 +3,8 @@
 #include "ft_paragraph.h"
 #include <random>
 #include <algorithm>
+#include <cmath>
+using namespace std;
 namespace auto_future
 {
      ft_essay::ft_essay()
@@ -14,7 +16,7 @@ namespace auto_future
      static default_random_engine generator;
      static uniform_real_distribution<float> distribution( 0.5, 1.f );
 
-     void ft_essay::load_content( wstring& str_content )
+     int ft_essay::load_content( wstring& str_content )
      {
           game_state = "";
           if( !_pfont_unit ||!str_content.size())
@@ -81,16 +83,73 @@ namespace auto_future
           }
           _cur_order.paragraphs_order.assign(_vchilds.size(), true);
           _cur_order.paragraphs_restored = true;
-          
+          auto unit_cnt = chd_cnt * chd_pcnt;
+          sec_of_pass_score = unit_cnt * 30;
+          sec_of_superb_score = sec_of_pass_score * 0.6;
+          sec_of_mid_score = sec_of_pass_score * 0.8;
+          sec_of_prepare = sec_of_pass_score * 0.04;
+          _load_start= steady_clock::now();
+          return unit_cnt;
           
      }
-
+     af_vec4 finish_state_col[en_score_cnt] = {
+       {0.74f,0.16f,0.8f,1.f},
+       {0.f,0.f,1.f,1.f},
+       {1.f,0.f,0.f,1.f},
+       {1.f,0.f,0.f,1.f}
+     };
      void ft_essay::draw()
      {
+          const int dur_show = 7853;
           if (!_pfont_unit)
           {
                return;
           }
+         
+          auto currentTime = steady_clock::now();
+          if (!_gaming) {
+            if (sec_of_prepare > 0) {//?y?¨²?¡è¨¤¨¤
+              auto load_its = duration_cast<seconds>(currentTime - _load_start);
+              auto load_sec = load_its.count();
+              sec_of_prepare -= load_sec;
+              if (sec_of_prepare <= 0) {
+
+              }
+              shuffle();
+            } else {//¨®??¡¤¨°??-?¨¢¨º?
+              auto its = duration_cast<milliseconds>(currentTime - _finish_start);
+              auto finish_consume = its.count();
+              if (finish_consume > dur_show) {//??¡ä£¤¡¤¡é??¨°???¨®??¡¤
+                game_triger(game_score);
+              } else {
+                ImVec2 abpos = absolute_coordinate_of_base_pos();
+                ImVec2 winpos = ImGui::GetWindowPos();
+                ImVec2 dpos = abpos + winpos;
+                af_vec2 draw_pos = { dpos.x, dpos.y };
+                af_vec2 _endpos;
+                float sc = 3 * cos(finish_consume / 1000.f);
+                g_pfont_face_manager->draw_wstring(_pfont_unit, font_size,
+                  draw_pos, _endpos,
+                  sc, game_finish_state,
+                  finish_state_col[game_score], 1000.f,
+                  0, false);
+              }
+              return;
+
+            }
+            
+          }
+          auto its = duration_cast<seconds>(currentTime - _play_start);
+          consume_seconds=its.count();
+          //consume_seconds = chrono::duration_cast<chrono::duration<seconds>>(currentTime - _play_start).count().count();
+
+          if (consume_seconds >= sec_of_pass_score) {
+            game_finish_state = L"you loss the game!";
+            game_score = en_fail;
+            _gaming = false;
+            _finish_start= steady_clock::now();
+          }
+
           auto wsz = ImGui::GetWindowSize();
           auto winpos = ImGui::GetWindowPos();
           auto l_edge = hmargin+winpos.x;
@@ -106,7 +165,7 @@ namespace auto_future
             float p_bottom = 0;
             for (int ix = 0; ix < ppara->get_child_count(); ix++) {
                 ft_sentence* pstc = static_cast<ft_sentence*>(ppara->get_child(ix));
-			    pstc->set_font_size(font_size);
+			          pstc->set_font_size(font_size);
                 pstc->init_edge( l_edge, r_edge );
                 pstc->line_spacing = line_spacing;
                 pstc->set_base_pos( spos.x, spos.y );
@@ -159,7 +218,7 @@ namespace auto_future
             }
                
           };
-           if( cur_window == front_window && wrect.Contains( ImGui::GetIO().MousePos ) )
+          if( cur_window == front_window && wrect.Contains( ImGui::GetIO().MousePos ) )
           {
                static base_ui_component* psel_ui = nullptr;
                ImGuiIO& io = ImGui::GetIO();
@@ -179,26 +238,23 @@ namespace auto_future
                          calculate_order();
                          if( _cur_order.is_orignal_order())
                          {
-                              auto currentTime = steady_clock::now();
-                              int delta = chrono::duration_cast<chrono::duration<int, std::milli>>( currentTime - _play_start ).count();
                               //printf( "msg_host consume%d milli seconds\n", delta );
                               _gaming = false;
-                              consume_seconds = delta / 1000;
-                              if (delta<10000)
+                              _finish_start = steady_clock::now();
+                              if (consume_seconds < sec_of_superb_score)
                               {
-                                   game_state = "You did a unbelievable job!";
+                                   game_finish_state = L"You did a unbelievable job!";
+                                   game_score = en_superb;
                               }
-                              else if(delta<20000 )
+                              else if(consume_seconds < sec_of_mid_score)
                               {
-                                   game_state = "You did a excellent job!";
+                                   game_finish_state = L"You did a excellent job!";
+                                   game_score =en_mid;
                               }
-                              else if (delta<1800000)
+                              else 
                               {
-                                   game_state = "You did a good job!";
-                              }
-                              else
-                              {
-                                   game_state = "Fail!";
+                                   game_finish_state = L"You did a good job!";
+                                   game_score =en_pass;
                               }
                          } else {
                              game_state = "";
@@ -232,7 +288,8 @@ namespace auto_future
 
      void ft_essay::shuffle()
      {
-         _gaming = true;
+          _gaming = true;
+          game_score = en_fail;
           game_state = "";
           _play_start = steady_clock::now();
           consume_seconds = 0;

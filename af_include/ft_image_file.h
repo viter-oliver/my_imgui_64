@@ -47,7 +47,10 @@ namespace auto_future
 		{
 			_img_pt._anchor_type = antp;
 		}
-          bool load_image_file( char* image_path );
+    bool load_image_file( const char* image_path );
+		bool load_image_file(std::string& image_path) {
+			return load_image_file(image_path.c_str());
+		}
 		unsigned int get_texture_id()
 		{
                return _texture_id;
