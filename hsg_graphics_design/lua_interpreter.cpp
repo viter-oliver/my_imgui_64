@@ -238,6 +238,7 @@ namespace lua_interpreter{
 			lua_pushstring(L,"y");
 			lua_gettable(L,-2);
 			pv3->y=lua_tointeger(L,-1);
+			lua_pop(L, 1);
 			lua_pushstring(L,"z");
 			lua_gettable(L,-2);
 			pv3->z=lua_tointeger(L,-1);
@@ -250,9 +251,11 @@ namespace lua_interpreter{
 			lua_pushstring(L,"y");
 			lua_gettable(L,-2);
 			pv4->y=lua_tointeger(L,-1);
+			lua_pop(L, 1);
 			lua_pushstring(L,"z");
 			lua_gettable(L,-2);
 			pv4->z=lua_tointeger(L,-1);
+			lua_pop(L, 1);
 			lua_pushstring(L,"w");
 			lua_gettable(L,-2);
 			pv4->w=lua_tointeger(L,-1);
@@ -274,6 +277,7 @@ namespace lua_interpreter{
 			lua_pushstring(L,"y");
 			lua_gettable(L,-2);
 			pv3->y=lua_tonumber(L,-1);
+			lua_pop(L, 1);
 			lua_pushstring(L,"z");
 			lua_gettable(L,-2);
 			pv3->z=lua_tonumber(L,-1);
@@ -286,9 +290,11 @@ namespace lua_interpreter{
 			lua_pushstring(L,"y");
 			lua_gettable(L,-2);
 			pv4->y=lua_tonumber(L,-1);
+			lua_pop(L, 1);
 			lua_pushstring(L,"z");
 			lua_gettable(L,-2);
 			pv4->z=lua_tonumber(L,-1);
+			lua_pop(L, 1);
 			lua_pushstring(L,"w");
 			lua_gettable(L,-2);
 			pv4->w=lua_tonumber(L,-1);

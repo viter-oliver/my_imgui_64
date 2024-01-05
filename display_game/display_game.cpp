@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  GLFWwindow *window = glfwCreateWindow(1600, 1300, "Graphics app", NULL, NULL);
+  GLFWwindow *window = glfwCreateWindow(2200, 1500, "Graphics app", NULL, NULL);
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1); // Enable vsync
   gl3wInit();
@@ -199,9 +199,13 @@ int main(int argc, char *argv[]) {
   //vairiables
   string cur_test_paper_file;
   string cur_test_paper_path;
-  bool be_testing = false;
+  char name_str[str_len] = {};
+  char content_str[str_len] = {};
+  char answer_str[str_len] = {};
+  string sub_common = "com";
+  bool be_gaming = false;
   uint16_t cur_topic_idx = 0;
-  int  _font_size = 20;
+  int  _font_size = 30;
   int _play_limit = 20;//seconds
   UINT _comsume_time = 0;
   af_vec4 txt_col{1,0,0,1};
@@ -241,6 +245,7 @@ int main(int argc, char *argv[]) {
           string content;
           wstringToUtf8(qu.content, content);
           jqu["content"] = content;
+          jqu["answer"] = qu.answer;
           json jopts;
           for (auto& opt : qu.options) {
             jopts.push_back(opt->op_name);
@@ -258,54 +263,160 @@ int main(int argc, char *argv[]) {
     ImGui_ImplGlfwGL3_NewFrame();
     static bool show_set = true;
     static bool show_edit = false;
-    ImGui::Begin("edit", &show_edit, ImVec2(1500, 100));
+    auto& ft_nm_list = g_pfont_face_manager->get_dic_fonts();
+    static int _font_id = 0;
+    {//setup
+      ImGui::Begin("Set up", &show_set, ImVec2(1500, 1000),ImGuiWindowFlags_NoMove);
+      ImGui::Combo("font:", &_font_id, &get_font_item, 0, ft_nm_list.size());
+      ImGui::SliderInt("Font size", &_font_size, 20, 50);
+      ImGui::SliderInt("Unit time limit", &_play_limit, 20, 30);
+      ImGui::ColorEdit4("text color", (float*)&txt_col, ImGuiColorEditFlags_RGB);
+      ImGui::End();    
+    }
+    auto sel_edit_item = [&] {
+      auto& cur_test = *cur_test_paper[sel_id];
+      if (!cur_test.name.empty()) {
+        strcpy_s(name_str, cur_test.name.size() + 1, cur_test.name.c_str());
+        name_str[cur_test.name.size()] = '\0';
+      }
+      if (!cur_test.content.empty()) {
+        string str;
+        wstringToUtf8(cur_test.content, str);
+        strcpy_s(content_str, str.size() + 1, str.c_str());
+        content_str[str.size()] = '\0';
+      }
+      if (!cur_test.answer.empty()) {
+        strcpy_s(answer_str, cur_test.answer.size() + 1, cur_test.answer.c_str());
+        answer_str[cur_test.answer.size()] = '\0';
+      }
+    };
+
+    {//base ops
+      ImGui::Begin("Basic operatios");
+      if (ImGui::Button("load testpaper...")) {
+            OPENFILENAME ofn = { sizeof(OPENFILENAME) };
+            ofn.hwndOwner = GetForegroundWindow();
+            ofn.lpstrFilter = "valid file:\0*.json\0\0";
+            char strFileName[MAX_PATH] = { 0 };
+            ofn.nFilterIndex = 1;
+            ofn.lpstrFile = strFileName;
+            ofn.nMaxFile = sizeof(strFileName);
+            ofn.lpstrTitle = "select a test paper please!";
+            ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+            if (GetOpenFileName(&ofn)) {
+              printf("open file%s\n", strFileName);
+              cur_test_paper_file = strFileName;
+              cur_test_paper_path = cur_test_paper_file.substr(0, cur_test_paper_file.find_last_of('\\') + 1);
+              ifstream fin;
+              nlohmann::json jsn_test_paper;
+              fin.open(cur_test_paper_file);
+
+              if (fin.is_open()) {
+                jsn_test_paper << fin;
+                auto jsz = jsn_test_paper.size();
+                cur_test_paper.clear();
+                //cur_test_paper.resize(jsz,);
+                int ix = 0;
+                for (; ix < jsz; ix++) {
+                  auto new_t = make_shared<question_def>();
+                  cur_test_paper.push_back(new_t);
+                  auto& cur_t = *new_t;
+                  auto& jcur_t = jsn_test_paper[ix];
+                  string atname= jcur_t["name"];
+                  cur_t.name = jcur_t["name"];
+                  string content = jcur_t["content"];
+      #if 1
+                  utf8ToWstring(content, cur_t.content);
+      #else
+                  cur_t.content =
+                    vector<string> sub_content_list;
+                  spilt_str(content, sub_content_list, '##');
+                  auto str_2_base_term = [&](string& str)->sd_base_term {
+                    sd_base_term s_bt;
+                    if (str[0] == '^') {
+                      string sub_str = str.substr(1);
+
+                    }
+                    else {
+                      wstring wstr;
+                      tf8ToWstring(str, wstr); u
+                        s_bt = make_shared<wstr_item>(wstr, ft_nm_list[_font_id], _font_size, txt_col);
+                    }
+                  };
+      #endif
+                  cur_t.answer = jcur_t["answer"];
+                  auto& joptions = jcur_t["option"];
+                  string sub_dir = cur_t.name.empty() ? sub_common : cur_t.name;
+                  string opt_dir = cur_test_paper_path + sub_dir + '\\';
+
+                  for (int ii = 0; ii < joptions.size(); ii++) {
+                    string opt = joptions[ii];
+                    string opt_path = opt_dir + opt;
+                    int tw, th;
+                    auto txt_id = TextureHelper::load2DTexture(opt_path.c_str(), tw, th, GL_RGBA, GL_RGBA, SOIL_LOAD_RGBA);
+                    if (txt_id > 0) {
+                      auto opt_btn = make_shared<optional_button>(opt, txt_id, ImVec2(tw, th));
+                      cur_t.options.push_back(opt_btn);
+                    }
+                  }
+                }
+                be_gaming = false;
+                sel_id = ix - 1;
+                sel_edit_item();
+
+              }
+            }
+          }
+      if (ImGui::Button("play...")) {
+        be_gaming = true;
+        cur_topic_idx = 0;
+        _comsume_time = 0;
+        random_shuffle(cur_test_paper.begin(), cur_test_paper.end());
+        for (auto& ctp : cur_test_paper) {
+          auto& ops = ctp->options;
+          ctp->got_it = false;
+          random_shuffle(ops.begin(), ops.end());
+        }
+        _play_start = _unit_start = steady_clock::now();
+      }
+      ImGui::Text("time consume:%d seconds", _comsume_time);
+      ImGui::End();
+    }
+    
+    if (!be_gaming) {//edit
+      ImGui::Begin("edit", &show_edit, ImVec2(1800, 300));
       ImGui::Columns(2);
       ImGui::SetColumnWidth(0, 400);
-      static char name_str[str_len] = {};
-      static char content_str[str_len] = {};
       if (ImGui::Button("Add question")) {
         cur_test_paper.push_back(make_shared<question_def>());
         sel_id = cur_test_paper.size() - 1;
       }
-      ImGui::ListBox("list of questions", &sel_id, [](void*, int, const char** out_str) ->bool{
-        auto& cur_test = *cur_test_paper[sel_id];
+      ImGui::SameLine();
+      if (ImGui::Button("Save")) {
+        save_prj();
+      }
+      bool sel=ImGui::ListBox("list of questions", &sel_id, [](void*, int id, const char** out_str) ->bool{
+        auto& cur_test = *cur_test_paper[id];
         *out_str= cur_test.name.c_str();
-        name_str[0] = '\0';
-        if (!cur_test.name.empty()) {
-          strcpy_s(name_str, cur_test.name.size(), cur_test.name.c_str());
-        }
-        if (!cur_test.content.empty()) {
-          string str;
-          wstringToUtf8(cur_test.content, str);
-          strcpy_s(content_str, str.size(), str.c_str());
-        }
-        
+        return true;
         }, 0, cur_test_paper.size());
-
+      if (sel) {
+        sel_edit_item();
+      }
       ImGui::NextColumn();
       if (sel_id >= 0 && sel_id < cur_test_paper.size()) {
         auto& cur_question = *cur_test_paper[sel_id];
      
         ImGui::InputText("name", name_str, str_len);
+        ImGui::InputText("answer", answer_str, str_len);
         ImGui::InputTextMultiline("content", content_str, str_len);
-        if (ImGui::Button("...")) {
+        ImGui::SameLine(0,80);
+        if (ImGui::Button("↑")) {
           cur_question.name = name_str;
           utf8ToWstring(content_str, cur_question.content);
+          cur_question.answer = answer_str;
         }
-        auto& options = cur_question.options;
-
-        int ix = 0;
-        while (ix < options.size()) {
-          auto& opt = *options[ix];
-          ImGui::Image((ImTextureID)opt._texture_id, opt._size);
-          char nm[20]="del#";
-          itoa(ix, nm+4, 10);
-          if (ImGui::Button(nm)) {
-            options.erase(options.begin() + ix);
-          } else {
-            ++ix;
-          }
-        }
+        
         if (ImGui::Button("Add option..")) {
           save_prj(true);
           OPENFILENAME ofn = { sizeof(OPENFILENAME) };
@@ -320,8 +431,11 @@ int main(int argc, char *argv[]) {
           if (GetOpenFileName(&ofn)) {
             string file_path(strFileName);
             string img_file_name = file_path.substr(file_path.find_last_of('\\') + 1);
-            string img_dir= file_path.substr(0, file_path.find_last_of('\\') + 1);
+            string img_dir = file_path.substr(0, file_path.find_last_of('\\') + 1);
             string opt_path = cur_test_paper_path + cur_question.name;
+            if (cur_question.name.empty()) {
+              opt_path += sub_common;
+            }
             if (!directoryExist(opt_path.c_str())) {
               createDirectory(opt_path.c_str());
             }
@@ -339,109 +453,55 @@ int main(int argc, char *argv[]) {
               cur_question.options.push_back(opt_btn);
             }
           }
-
         }
-        if (ImGui::Button("Save")) {
-          save_prj();
+        auto& options = cur_question.options;
+        ImGui::BeginChild("options");
+        if (options.size() > 0) {
+          ImGui::Columns(options.size());
+          int ix = 0;
+          while (ix < options.size()) {
+            auto& opt = *options[ix];
+            ImGui::Text(opt.op_name.c_str());
+            ImGui::Image((ImTextureID)opt._texture_id, opt._size);
+            char nm[20]="X##";
+            itoa(ix, nm+4, 10);
+            ImGui::SameLine();
+            if (ImGui::Button(nm)) {
+              options.erase(options.begin() + ix);
+            } else {
+              ++ix;
+            }
+            ImGui::NextColumn();
+          }
         }
+        
+        ImGui::EndChild();
+        
+        
       }
-    ImGui::End();
-
-    ImGui::Begin("Set up", &show_set, ImVec2(1500, 1000),
-      ImGuiWindowFlags_NoMove);
-
-      auto& ft_nm_list = g_pfont_face_manager->get_dic_fonts();
-      static int _font_id = 0;
-      ImGui::Combo("font:", &_font_id, &get_font_item, 0, ft_nm_list.size());
-      ImGui::SliderInt("Font size", &_font_size, 20, 50);
-      ImGui::SliderInt("Unit time limit", &_play_limit, 20, 30);
-      ImGui::ColorEdit4("text color", (float*)&txt_col, ImGuiColorEditFlags_RGB);
-    ImGui::End();
-    ImGui::Begin("topic");
+      ImGui::End();
+      
+    }else {//gaming
+      ImGui::Begin("topic");
       auto see_if_end = [&] {
         _unit_start = steady_clock::now();
         int e_cnt = 0;
-        while (!(cur_test_paper[++cur_topic_idx]->got_it) && e_cnt++ < cur_test_paper.size()) {}
+        auto next_id = [&] {++cur_topic_idx; cur_topic_idx %= cur_test_paper.size(); return cur_topic_idx; };
+        while (cur_test_paper[next_id()]->got_it&& e_cnt++ < cur_test_paper.size()) {}
         if (e_cnt >= cur_test_paper.size()) {
-          be_testing = false;
+          be_gaming = false;
+          auto currentTime = steady_clock::now();
+          auto its = duration_cast<seconds>(currentTime - _play_start);
+          _comsume_time = its.count();
+
         }
       };
-      if (ImGui::Button("load testpaper...")) {
-        OPENFILENAME ofn = { sizeof(OPENFILENAME) };
-        ofn.hwndOwner = GetForegroundWindow();
-        ofn.lpstrFilter = "valid file:\0*.txt\0\0";
-        char strFileName[MAX_PATH] = { 0 };
-        ofn.nFilterIndex = 1;
-        ofn.lpstrFile = strFileName;
-        ofn.nMaxFile = sizeof(strFileName);
-        ofn.lpstrTitle = "select a test paper please!";
-        ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-        if (GetOpenFileName(&ofn)) {
-          printf("open file%s\n", strFileName);
-          cur_test_paper_file = strFileName;
-          cur_test_paper_path = cur_test_paper_file.substr(0, cur_test_paper_file.find_last_of('\\') + 1);
-
-          ifstream fin;
-          nlohmann::json jsn_test_paper;
-          fin.open(cur_test_paper_file);
-        
-          if (fin.is_open()) {
-            jsn_test_paper << fin;
-            auto jsz = jsn_test_paper.size();
-            cur_test_paper.clear();
-            cur_test_paper.resize(jsz);
-
-            for (int ix = 0; ix < jsz; ix++) {
-              auto& cur_t = *cur_test_paper[ix];
-              auto& jcur_t = jsn_test_paper[ix];
-              cur_t.name = jcur_t["name"];
-              string content = jcur_t["content"];
-  #if 1
-              utf8ToWstring(content, cur_t.content);
-  #else
-              cur_t.content=
-              vector<string> sub_content_list;
-              spilt_str(content, sub_content_list, '#');
-              auto str_2_base_term = [&](string& str)->sd_base_term {
-                sd_base_term s_bt;
-                if (str[0] == '^') {
-                  string sub_str = str.substr(1);
-
-                }
-                else {
-                  wstring wstr;
-                  tf8ToWstring(str, wstr);u
-                  s_bt = make_shared<wstr_item>(wstr, ft_nm_list[_font_id], _font_size, txt_col);
-                }
-              };
-  #endif
-              auto& joptions = jcur_t["option"];
-              string opt_dir = cur_test_paper_path + cur_t.name + '\\';
-              for (int ix = 0; ix < joptions.size(); ix++) {
-
-                string opt = joptions[ix];
-                string opt_path = opt_dir + opt;
-                int tw, th;
-                auto txt_id = TextureHelper::load2DTexture(opt_path.c_str(), tw, th, GL_RGBA, GL_RGBA, SOIL_LOAD_RGBA);
-                if (txt_id > 0) {
-                  auto opt_btn = make_shared<optional_button>(opt, txt_id, ImVec2(tw, th));
-                  cur_t.options.push_back(opt_btn);
-                }
-              }
-
-            }
-            random_shuffle(jsn_test_paper.begin(), jsn_test_paper.end());
-            be_testing = true;
-            cur_topic_idx = 0;
-            _comsume_time = 0;
-            _play_start = _unit_start = steady_clock::now();
-          }
-        }
-      }
-      if (be_testing&&cur_test_paper.size() > 0) {
+      if (be_gaming&&cur_test_paper.size() > 0) {
         auto& cur_paper = *cur_test_paper[cur_topic_idx];
         ImVec2 winpos = ImGui::GetWindowPos();
         af_vec2 draw_pos = { winpos.x, winpos.y };
+        af_vec2 delta={5, 30};
+        draw_pos += delta;
         af_vec2 end_pos;
         int delta_height = 0;
   #if 1
@@ -454,23 +514,26 @@ int main(int argc, char *argv[]) {
           draw_pos = end_pos;
         }
   #endif
+        ImGui::SetCursorPosY(200);
         for (auto& opt_btn : cur_paper.options) {
           if (opt_btn->select()) {
             cur_paper.got_it = opt_btn->op_name == cur_paper.answer;
             see_if_end();
           }
+          ImGui::SameLine(0,40);
         }
+
         auto currentTime = steady_clock::now();
         auto unit_its = duration_cast<seconds>(currentTime - _unit_start);
         auto unit_sec = unit_its.count();
         if (unit_sec > _play_limit) {
           see_if_end();
         }
-      
-      } else {
-        ImGui::Text("time consume:%d seconds", _comsume_time);
       }
-    ImGui::End();
+      ImGui::End();
+
+    }
+
     // Rendering
     int display_w, display_h;
     glfwGetFramebufferSize(window, &display_w, &display_h);

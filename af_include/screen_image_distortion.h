@@ -3,43 +3,33 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include "af_shader.h"
-#include "res_output.h"
-#include "af_primitive_object.h"
 namespace auto_future
 {
 	class screen_image_distortion
 	{
-		//GLuint g_VboHandle;
-		//GLuint g_VaoHandle;
+          GLuint g_VboHandle;
 		GLuint _fboId;
-		GLint _last_fbo;
 		GLint _prev_fbo;
-		GLuint _rbo;
 		GLuint _colorTextId;
-		GLuint _distortionTextId;
 		GLuint _depthStencilTextId;
-		float _img_sz[4];
+          GLuint _Ul_customMtx, _Ul_customDelta;
+		float _width, _height;
 		GLuint _txtDistortion;
 		ps_shader _pshader;
-		ps_primrive_object _ps_prm;
-		ps_af_texture _pat_image;
+          float g_cs_a = 1.f, g_sn_a = 0.f, g_ox = 0.f, g_oy = -0.3333f;
 	public:
-		screen_image_distortion(float win_width, float win_height, float screen_width, float screen_height, string path);
+		screen_image_distortion(float width, float height);
 		~screen_image_distortion();
-		void get_win_size(float &width, float &height) {
-			width = _img_sz[0];
-			height = _img_sz[1];
-		}
-		void get_screen_size(float &width, float &height)
+          void set_rotate_angle( float angle );
+          void set_rotate_axis_pos( float px, float py );
+		void get_size(float& width, float& height)
 		{
-			width = _img_sz[2];
-			height = _img_sz[3];
+			width = _width;
+			height =_height;
 		}
 		void bind_framebuffer();
 		void draw();
 		void disbind_framebuffer();
-		void bind_texture();
-		void create_test_dic(float width, float height, string path);
-		void ScreenShot();
 	};
+
 }

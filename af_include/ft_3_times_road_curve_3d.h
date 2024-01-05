@@ -11,8 +11,6 @@ namespace auto_future
      {
         DEF_STRUCT_WITH_INIT(pty_page, _pt_tb,
                              (char, _attached_image[FILE_NAME_LEN]),
-                             (char, _attached_side_l_image[FILE_NAME_LEN]),
-                             (char, _attached_side_r_image[FILE_NAME_LEN]),
                              (char, _attached_bg_image[FILE_NAME_LEN]),
                              (float, _coeff_hac[4]),
                              (float, _u_l, {0.f}),
@@ -22,19 +20,12 @@ namespace auto_future
                              (float, _near, {-1.f}),
                              (float, _far, {-1.f}),
                              (float, _voffset, {0.f}),
-                             (float, _side_voffset, {0.f}),
                              (float, _alpha_nml, {1.f}),
-                             (float, _mix_nml, {1.f}),
                              (af_vec3, _lane_clr),
-                             (af_vec3, _side_l_clr),
-                             (af_vec3, _side_r_clr),
                              (af_vec3, _lane_bg_clr))
-
           static ps_shader _phud_sd;
           static ps_primrive_object _ps_prm;
           ps_af_texture _pat_image;
-          ps_af_texture _pat_side_l_image;
-          ps_af_texture _pat_side_r_image;
           ps_af_texture _pat_bg_image;
      public:
           ft_3_times_road_curve_3d();
@@ -61,24 +52,12 @@ namespace auto_future
               _pt_tb._lane_clr = lane_col;
               return *this;
           }
-          ft_3_times_road_curve_3d &set_side_l_color(af_vec3 side_l_col) {
-              _pt_tb._side_l_clr = side_l_col;
-              return *this;
-          }
-          ft_3_times_road_curve_3d &set_side_r_color(af_vec3 side_r_col) {
-              _pt_tb._side_r_clr = side_r_col;
-              return *this;
-          }
           ft_3_times_road_curve_3d &set_lane_bg_color(af_vec3 lane_bg_col) {
               _pt_tb._lane_bg_clr = lane_bg_col;
               return *this;
           }
           ft_3_times_road_curve_3d& set_voffset(float voffset) {
               _pt_tb._voffset = voffset;
-              return *this;
-          }
-          ft_3_times_road_curve_3d &set_side_voffset(float voffset) {
-              _pt_tb._side_voffset = voffset;
               return *this;
           }
           ft_3_times_road_curve_3d& set_base_z(float z) {
@@ -88,14 +67,6 @@ namespace auto_future
           void set_txt_obj(std::string txt_name) {
               strcpy(_pt_tb._attached_image, txt_name.c_str());
           }
-          void set_txt_obj_side_l(std::string txt_name) {
-              strcpy(_pt_tb._attached_side_l_image, txt_name.c_str());
-          }
-
-          void set_txt_obj_side_r(std::string txt_name) {
-              strcpy(_pt_tb._attached_side_r_image, txt_name.c_str());
-          }
-
           void set_txt_obj_bg(std::string txt_name) {
               strcpy(_pt_tb._attached_bg_image, txt_name.c_str());
           }

@@ -1,3 +1,12 @@
+set(cuda_head_dir D:\\cuda_exe\\development\\include)
+set(cuda_lib_dir D:\\cuda_exe\\lib\\x64)
+set(cudnn_head_dir D:\\cudnn-windows-x86_64-8.9.3.28_cuda11-archive\\include)
+set(cudnn_lib_dir D:\\cudnn-windows-x86_64-8.9.3.28_cuda11-archive\\lib\\x64)
+set(torch_head_dir D:\\libtorch-win-shared-with-deps-2.0.1+cu118\\libtorch\\include)
+set(torch_api_head_dir D:\\libtorch-win-shared-with-deps-2.0.1+cu118\\libtorch\\include\\torch\\csrc\\api\\include)
+set(torch_lib_dir D:\\libtorch-win-shared-with-deps-2.0.1+cu118\\libtorch\\lib)
+set(torchvision_head_dir D:\\vision-0.15.2\\vision-0.15.2\\out\\install\\x64-Debug\\include)
+set(torchvision_lib_dir D:\\vision-0.15.2\\bd)
 include_directories(${cuda_head_dir} ${cudnn_head_dir} ${torch_head_dir} ${torch_api_head_dir} ${torchvision_head_dir} ${opencv_head_dir})
 link_directories(${cuda_lib_dir} ${cudnn_lib_dir} ${torch_lib_dir}
 ${torchvision_lib_dir} ${opencv_lib_dir})

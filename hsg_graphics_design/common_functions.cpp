@@ -634,6 +634,7 @@ bool smooth_algorithm_5_points_average(vector<ImVec2>& point_list, bool x_direct
 		}
 	}
 	return true;
+	return true;
 }
 
 

@@ -98,35 +98,20 @@ add_executable(HSG ${lua_src} ${lua_h} ${hsg_src} ${hsg_h}
  target_link_libraries(HSG_LIB gl3w glfw freetyped opengl32)
  target_compile_definitions(HSG_LIB PRIVATE 
  IMGUI_DISABLE_DEMO_WINDOWS BUILD_DLL)
-
  add_subdirectory(demo)
  add_subdirectory(compositionGame)
- add_subdirectory(display_game)
  add_subdirectory(create_bmp)
  add_subdirectory(create_primitive_format_table)
  add_subdirectory(change_lane_prm)
  add_subdirectory(font23D-master)
  add_subdirectory(blf_resolve)
  add_subdirectory(hst_arhud)
-
-set(opencv_head_dir D:\\opencv\\opencv\\build\\include)
-set(opencv_lib_dir D:\\opencv\\opencv\\build\\x64\\vc16\\lib)
-set(cuda_head_dir D:\\cuda_exe\\development\\include)
-set(cuda_lib_dir D:\\cuda_exe\\lib\\x64)
-set(cudnn_head_dir D:\\cudnn-windows-x86_64-8.9.3.28_cuda11-archive\\include)
-set(cudnn_lib_dir D:\\cudnn-windows-x86_64-8.9.3.28_cuda11-archive\\lib\\x64)
-set(torch_head_dir D:\\libtorch-win-shared-with-deps-2.0.1+cu118\\libtorch\\include)
-set(torch_api_head_dir D:\\libtorch-win-shared-with-deps-2.0.1+cu118\\libtorch\\include\\torch\\csrc\\api\\include)
-set(torch_lib_dir D:\\libtorch-win-shared-with-deps-2.0.1+cu118\\libtorch\\lib)
-set(torchvision_head_dir D:\\vision-0.15.2\\vision-0.15.2\\out\\install\\x64-Debug\\include)
-set(torchvision_lib_dir D:\\vision-0.15.2\\bd)
-
-add_subdirectory(creation_of_tb_of_correction_of_distortion)
-add_subdirectory(create_dic_txt)
-add_subdirectory(hud_lai)
-add_subdirectory(lane_fitting_analyser)
-add_subdirectory(InstallAFGD)
-add_subdirectory(fast-lzma2)
+ set(opencv_head_dir D:\\opencv\\opencv\\build\\include)
+ set(opencv_lib_dir D:\\opencv\\opencv\\build\\x64\\vc16\\lib)
+ add_subdirectory(create_dic_txt)
+ add_subdirectory(hud_lai)
+ add_subdirectory(lane_fitting_analyser)
+ add_subdirectory(InstallAFGD)
 
 
 
