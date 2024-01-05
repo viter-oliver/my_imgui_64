@@ -28,7 +28,7 @@ namespace auto_future
        en_fail,
        en_score_cnt
      };
-     float scale_score[en_score_cnt] = { 0.6f,0.8f,1.f,0.0f };
+     const float scale_score[en_score_cnt] = { 0.6f,0.8f,1.f,0.0f };
      
      using game_state_trigger = function<void(score_state st)>;
      class ft_essay :

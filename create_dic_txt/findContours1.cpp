@@ -1096,15 +1096,13 @@ int main(int argc, char** argv) {
       auto& pt = cv[ix];
       if (be_neighboring(pt0, pt)) {
         cv_o.emplace_back(pt);
-      }
-      else {
+      } else {
         curve mid_cv;
         line_points(pt0, pt, mid_cv);
         auto msz = mid_cv.size();
         for (int i = 1; i < msz; i++) {
           cv_o.emplace_back(mid_cv[i]);
-        }
-       
+        } 
       }
       pt0 = pt;
     }

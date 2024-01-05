@@ -21,9 +21,9 @@ namespace auto_future
           game_state = "";
           if( !_pfont_unit ||!str_content.size())
           {
-               return;
+               return 0;
           }
-          for( auto it_child = _vchilds.begin(); it_child != _vchilds.end(); )
+          for( auto it_child =  _vchilds.begin(); it_child != _vchilds.end(); )
           {
                auto pchild = *it_child;
                delete pchild;
@@ -101,14 +101,14 @@ namespace auto_future
      void ft_essay::draw()
      {
           const int dur_show = 7853;
-          if (!_pfont_unit)
+          if (!_pfont_unit|| _vchilds.size()==0)
           {
                return;
           }
          
           auto currentTime = steady_clock::now();
           if (!_gaming) {
-            if (sec_of_prepare > 0) {//?y?ú?¤àà
+            if (sec_of_prepare > 0) {//正在预览
               auto load_its = duration_cast<seconds>(currentTime - _load_start);
               auto load_sec = load_its.count();
               sec_of_prepare -= load_sec;
@@ -116,10 +116,10 @@ namespace auto_future
 
               }
               shuffle();
-            } else {//ó??·ò??-?áê?
+            } else {//游戏已经结束
               auto its = duration_cast<milliseconds>(currentTime - _finish_start);
               auto finish_consume = its.count();
-              if (finish_consume > dur_show) {//??′￥·￠??ò???ó??·
+              if (finish_consume > dur_show) {//将触发下一轮游戏
                 game_triger(game_score);
               } else {
                 ImVec2 abpos = absolute_coordinate_of_base_pos();

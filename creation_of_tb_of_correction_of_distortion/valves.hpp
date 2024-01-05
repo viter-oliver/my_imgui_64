@@ -80,7 +80,7 @@ bool be_neighboring(Point& pt0, Point& pt1) {
 void cut_contour_2_sides(contour_list& cnt_list, segments& smt_list) {
   for (int ix = 0; ix < cnt_list.size(); ix++) {
     auto& contour = cnt_list[ix];
-    if (contour.size() < 40) continue;
+    if (contour.size() < 40) continue;//contour is too small,so rejected
     circle_iterable_curve tcv_contour = { contour, 0 };
     curve approx;
     cv::approxPolyDP(contour, approx, 8, true);

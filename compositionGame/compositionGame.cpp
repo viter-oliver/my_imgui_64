@@ -28,9 +28,29 @@
 #include <functional>
 #include <tchar.h>
 #include <windows.h>
-
+#include <io.h>
 string g_current_running_directory;
 const int max_path_len = 1024;
+bool fileExist(const char* fileName)
+{
+  WIN32_FIND_DATA wfd;
+  HANDLE hHandle = ::FindFirstFile(fileName, &wfd);
+  if (hHandle == INVALID_HANDLE_VALUE)
+    return false;
+  else
+    return (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
+
+}
+
+bool directoryExist(const char* dir)
+{
+  WIN32_FIND_DATA wfd;
+  HANDLE hHandle = ::FindFirstFile(dir, &wfd);
+  if (hHandle == INVALID_HANDLE_VALUE)
+    return access(dir, 0) == 0; // if dir is a drive disk path like c:\,we thought is a directory too.  	
+  else
+    return (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+}
 void listFiles( const char * dir )
 {
      using namespace std;
@@ -168,18 +188,16 @@ int main(int argc, char *argv[]) {
     }
   };
   int cid = 0;
-  bool finish_all_test = false;
+  bool finish_all_test = true;
   auto cur_content = [&]()->wstring& {return book_list[cid].content; };
 
   sptr_essay->set_trig([&](score_state gtriger) {
     auto& cur_book = book_list[cid];
     cur_book.final_score = scale_score[gtriger] * cur_book.total_score;
     int e_cnt = 0;
-    while (book_list[cid].final_score == 0 && e_cnt < book_list.size()) {
-      e_cnt++;
-      cid++;
-      cid %= book_list.size();
-    }
+    auto next_item = [&] {cid++;
+    cid %= book_list.size(); return cid; };
+    while (book_list[next_item()].final_score != 0 && e_cnt++ < book_list.size()) {}
     if (e_cnt == (book_list.size() - 1)) {
       finish_all_test = true;
     } else {
@@ -220,11 +238,10 @@ int main(int argc, char *argv[]) {
       }
 
       if (!finish_all_test) {
-        if (ImGui::Button("restore")) {
+        if (book_list.size()>0&&ImGui::Button("restore")) {
           sptr_essay->load_content(cur_content());
         }
       } else {
-        
         if (ImGui::Button("...")) {
           OPENFILENAME ofn = {sizeof(OPENFILENAME)};
           ofn.hwndOwner = GetForegroundWindow();
@@ -239,17 +256,26 @@ int main(int argc, char *argv[]) {
             book_list.clear();
             printf("open file%s\n", strFileName);
             char* pstr = ofn.lpstrFile;
-            cur_directory = ofn.lpstrFile;
-            pstr += (cur_directory.length() + 1);
-            while (*pstr) {
+            if (fileExist(pstr)) {//single file
+              string str_file(pstr);
+              cur_directory= str_file.substr(0, str_file.find_last_of('\\') + 1);
               book_list.push_back(book_unit());
               auto& cur_book = *(book_list.end() - 1);
-              auto& book = cur_book.name;
-              auto& content = cur_book.content;
-              book = pstr;
-              string file_name = cur_directory +"\\"+ book;
-              load_file_2_content(file_name, content);
-              pstr += (book.length() + 1);
+              cur_book.name= str_file.substr(str_file.find_last_of('\\') + 1);
+              load_file_2_content(str_file, cur_book.content);
+            } else {
+              cur_directory = ofn.lpstrFile;
+              pstr += (cur_directory.length() + 1);
+              while (*pstr) {
+                book_list.push_back(book_unit());
+                auto& cur_book = *(book_list.end() - 1);
+                auto& book = cur_book.name;
+                auto& content = cur_book.content;
+                book = pstr;
+                string file_name = cur_directory + "\\" + book;
+                load_file_2_content(file_name, content);
+                pstr += (book.length() + 1);
+              }
             }
             float total_sz = 0.f;
             for (auto& bk : book_list) {
