@@ -20,19 +20,7 @@ namespace auto_future
             return false;
         }
      };
-<<<<<<< HEAD
-     enum score_state {
-       en_pass,
-       en_mid,
-       en_superb,
-       en_fail,
-       en_score_cnt
-     };
-     const float scale_score[en_score_cnt] = { 0.6f,0.8f,1.f,0.0f };
-     
-     using game_state_trigger = function<void(score_state st)>;
-=======
->>>>>>> parent of aa0dd62 (display game)
+
      class ft_essay :
           public ft_base
      {

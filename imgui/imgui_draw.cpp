@@ -2075,11 +2075,7 @@ const ImWchar*  ImFontAtlas::GetGlyphRangesChinese()
 	static ImWchar base_ranges[] = // not zero-terminated
 	{
 		0x0020, 0x00FF, // Basic Latin + Latin Supplement
-<<<<<<< HEAD
         0x2190, 0x221A,
-=======
-          0x2190, 0x221A,
->>>>>>> parent of aa0dd62 (display game)
 		0x3000, 0x30FF, // Punctuations, Hiragana, Katakana
 		0x31F0, 0x31FF, // Katakana Phonetic Extensions
 		0xFF00, 0xFFEF, // Half-width characters
@@ -2093,7 +2089,6 @@ const ImWchar*  ImFontAtlas::GetGlyphRangesChinese()
 	return &full_ranges[0];
 #endif
 }
-<<<<<<< HEAD
 const ImWchar* ImFontAtlas::GetGlyphRangesChineseFull()
 {
   static const ImWchar ranges[] =
@@ -2109,9 +2104,6 @@ const ImWchar* ImFontAtlas::GetGlyphRangesChineseFull()
   };
   return &ranges[0];
 }
-=======
-
->>>>>>> parent of aa0dd62 (display game)
 const ImWchar*  ImFontAtlas::GetGlyphRangesJapanese()
 {
     // Store the 1946 ideograms code points as successive offsets from the initial unicode codepoint 0x4E00. Each offset has an implicit +1.

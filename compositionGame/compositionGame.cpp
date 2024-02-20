@@ -30,31 +30,6 @@
 #include <windows.h>
 #include <io.h>
 string g_current_running_directory;
-<<<<<<< HEAD
-const int max_path_len = 1024;
-bool fileExist(const char* fileName)
-{
-  WIN32_FIND_DATA wfd;
-  HANDLE hHandle = ::FindFirstFile(fileName, &wfd);
-  if (hHandle == INVALID_HANDLE_VALUE)
-    return false;
-  else
-    return (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0;
-
-}
-
-bool directoryExist(const char* dir)
-{
-  WIN32_FIND_DATA wfd;
-  HANDLE hHandle = ::FindFirstFile(dir, &wfd);
-  if (hHandle == INVALID_HANDLE_VALUE)
-    return access(dir, 0) == 0; // if dir is a drive disk path like c:\,we thought is a directory too.  	
-  else
-    return (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-}
-=======
-
->>>>>>> parent of aa0dd62 (display game)
 void listFiles( const char * dir )
 {
      using namespace std;
@@ -193,64 +168,9 @@ int main(int argc, char *argv[]) {
   // ImVec2 edit_window_size = ImVec2()
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
   shared_ptr<ft_essay> sptr_essay = make_shared<ft_essay>();
-<<<<<<< HEAD
 
-  vector<book_unit> book_list;
-  auto load_file_2_content = [](string& file_name, wstring& content) {
-    ifstream fin;
-    fin.open(file_name, ios::binary);
-    auto utf8ToWstring = [](const std::string& str,wstring& wstr) {
-      std::wstring_convert<std::codecvt_utf8<wchar_t>> strCnv;
-      wstr= strCnv.from_bytes(str);
-    };
-    if (fin.is_open()) {
-      auto file_size = fin.tellg();
-      fin.seekg(0, ios::end);
-      file_size = fin.tellg() - file_size;
-      fin.seekg(0, ios::beg);
-      string str_buff;
-      str_buff.resize((int)file_size + 1);
-      fin.read(&str_buff[0], file_size);
-      str_buff[file_size] = 0;
-
-      fin.close();
-
-      if (str_buff[0] == 0xff && str_buff[1] == 0xfe) // unicode
-      {
-        auto wsz = ((int)file_size - 2) / 2;
-        content.resize(wsz);
-        memcpy(&content[0], &str_buff[2], wsz * 2);
-      }
-      else if ((unsigned char)str_buff[0] == 0xef &&
-        (unsigned char)str_buff[1] == 0xbb) {// utf 8 bom
-        utf8ToWstring(str_buff.substr(3),content);
-      } else {
-        utf8ToWstring(str_buff,content);
-      }
-    }
-  };
-  int cid = 0;
-  bool finish_all_test = true;
-  auto cur_content = [&]()->wstring& {return book_list[cid].content; };
-
-  sptr_essay->set_trig([&](score_state gtriger) {
-    auto& cur_book = book_list[cid];
-    cur_book.final_score = scale_score[gtriger] * cur_book.total_score;
-    int e_cnt = 0;
-    auto next_item = [&] {cid++;
-    cid %= book_list.size(); return cid; };
-    while (book_list[next_item()].final_score != 0 && e_cnt++ < book_list.size()) {}
-    if (e_cnt == (book_list.size() - 1)) {
-      finish_all_test = true;
-    } else {
-      sptr_essay->load_content(book_list[cid].content);
-      finish_all_test = false;
-    }
-  });
-  string cur_directory;
-=======
   wstring wstr_content;
->>>>>>> parent of aa0dd62 (display game)
+
   string cur_ebook_path;
   // Main loop
   while (!glfwWindowShouldClose(window)) {
@@ -316,47 +236,6 @@ int main(int argc, char *argv[]) {
             fin.read(&str_buff[0], file_size);
             str_buff[file_size] = 0;
 
-<<<<<<< HEAD
-      if (!finish_all_test) {
-        if (book_list.size()>0&&ImGui::Button("restore")) {
-          sptr_essay->load_content(cur_content());
-        }
-      } else {
-        if (ImGui::Button("...")) {
-          OPENFILENAME ofn = {sizeof(OPENFILENAME)};
-          ofn.hwndOwner = GetForegroundWindow();
-          ofn.lpstrFilter = "valid file:\0*.txt\0\0";
-          char strFileName[max_path_len] = {0};
-          ofn.nFilterIndex = 1;
-          ofn.lpstrFile = strFileName;
-          ofn.nMaxFile = 1024;
-          ofn.lpstrTitle = "select txts please!";
-          ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_ALLOWMULTISELECT| OFN_EXPLORER;
-          if (GetOpenFileName(&ofn)) {
-            book_list.clear();
-            printf("open file%s\n", strFileName);
-            char* pstr = ofn.lpstrFile;
-            if (fileExist(pstr)) {//single file
-              string str_file(pstr);
-              cur_directory= str_file.substr(0, str_file.find_last_of('\\') + 1);
-              book_list.push_back(book_unit());
-              auto& cur_book = *(book_list.end() - 1);
-              cur_book.name= str_file.substr(str_file.find_last_of('\\') + 1);
-              load_file_2_content(str_file, cur_book.content);
-            } else {
-              cur_directory = ofn.lpstrFile;
-              pstr += (cur_directory.length() + 1);
-              while (*pstr) {
-                book_list.push_back(book_unit());
-                auto& cur_book = *(book_list.end() - 1);
-                auto& book = cur_book.name;
-                auto& content = cur_book.content;
-                book = pstr;
-                string file_name = cur_directory + "\\" + book;
-                load_file_2_content(file_name, content);
-                pstr += (book.length() + 1);
-              }
-=======
             fin.close();
 
             if (str_buff[0] == 0xff && str_buff[1] == 0xfe) // unicode
@@ -370,9 +249,7 @@ int main(int argc, char *argv[]) {
 
               wstr_content = utf8ToWstring(str_buff.substr(3));
             } else {
-
               wstr_content = utf8ToWstring(str_buff);
->>>>>>> parent of aa0dd62 (display game)
             }
             sptr_essay->load_content(wstr_content);
           }

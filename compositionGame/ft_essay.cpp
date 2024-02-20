@@ -19,7 +19,7 @@ namespace auto_future
           game_state = "";
           if( !_pfont_unit ||!str_content.size())
           {
-               return 0;
+               return;
           }
           for( auto it_child =  _vchilds.begin(); it_child != _vchilds.end(); )
           {
@@ -87,63 +87,10 @@ namespace auto_future
 
      void ft_essay::draw()
      {
-<<<<<<< HEAD
-          const int dur_show = 7853;
-          if (!_pfont_unit|| _vchilds.size()==0)
-          {
-               return;
-          }
-         
-          auto currentTime = steady_clock::now();
-          if (!_gaming) {
-            if (sec_of_prepare > 0) {//正在预览
-              auto load_its = duration_cast<seconds>(currentTime - _load_start);
-              auto load_sec = load_its.count();
-              sec_of_prepare -= load_sec;
-              if (sec_of_prepare <= 0) {
-
-              }
-              shuffle();
-            } else {//游戏已经结束
-              auto its = duration_cast<milliseconds>(currentTime - _finish_start);
-              auto finish_consume = its.count();
-              if (finish_consume > dur_show) {//将触发下一轮游戏
-                game_triger(game_score);
-              } else {
-                ImVec2 abpos = absolute_coordinate_of_base_pos();
-                ImVec2 winpos = ImGui::GetWindowPos();
-                ImVec2 dpos = abpos + winpos;
-                af_vec2 draw_pos = { dpos.x, dpos.y };
-                af_vec2 _endpos;
-                float sc = 3 * cos(finish_consume / 1000.f);
-                g_pfont_face_manager->draw_wstring(_pfont_unit, font_size,
-                  draw_pos, _endpos,
-                  sc, game_finish_state,
-                  finish_state_col[game_score], 1000.f,
-                  0, false);
-              }
-              return;
-
-            }
-            
-          }
-          auto its = duration_cast<seconds>(currentTime - _play_start);
-          consume_seconds=its.count();
-          //consume_seconds = chrono::duration_cast<chrono::duration<seconds>>(currentTime - _play_start).count().count();
-
-          if (consume_seconds >= sec_of_pass_score) {
-            game_finish_state = L"you loss the game!";
-            game_score = en_fail;
-            _gaming = false;
-            _finish_start= steady_clock::now();
-          }
-
-=======
           if (!_pfont_unit)
           {
                return;
           }
->>>>>>> parent of aa0dd62 (display game)
           auto wsz = ImGui::GetWindowSize();
           auto winpos = ImGui::GetWindowPos();
           auto l_edge = hmargin+winpos.x;
@@ -159,7 +106,7 @@ namespace auto_future
             float p_bottom = 0;
             for (int ix = 0; ix < ppara->get_child_count(); ix++) {
                 ft_sentence* pstc = static_cast<ft_sentence*>(ppara->get_child(ix));
-			    pstc->set_font_size(font_size);
+			          pstc->set_font_size(font_size);
                 pstc->init_edge( l_edge, r_edge );
                 pstc->line_spacing = line_spacing;
                 pstc->set_base_pos( spos.x, spos.y );
@@ -317,5 +264,4 @@ namespace auto_future
           }
           _cur_order.paragraphs_restored = ix == oid;
      }
-
 }
